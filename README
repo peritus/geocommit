@@ -1,2 +1,10 @@
 This attaches geolocation information to git commits you you know where you
 where when you coded the stuff.
+
+Developing
+==========
+
+1.) python bootstrap.py
+2.) ./bin/buildout
+3.) ???
+4.) # happy hacking!
