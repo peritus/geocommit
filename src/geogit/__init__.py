@@ -25,7 +25,7 @@ class GeoGit(object):
         note_file.write(self.format_location())
         note_file.flush()
 
-        system("git notes --ref=geogit add -f " + note_file.name + "")
+        system("git notes --ref=geogit add -F " + note_file.name + " HEAD")
 
         note_file.close()
 
