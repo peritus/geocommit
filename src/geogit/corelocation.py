@@ -20,12 +20,6 @@ class MacLocation(NSObject):
         print newlocation
         stdlog.flush()
 
-#    @objc.signature("v@:@")
-#    def locationManager_didFailWithError_(self, error):
-#        print 'error'
-#        print error
-#        stdlog.flush()
-
     @objc.signature("v@:@")
     def applicationSuspend_(self, event):
         print "suspend called"
@@ -58,7 +52,4 @@ def main():
     NSApp().setDelegate_(delegate)
 
     app.run()
-
-#    from PyObjCTools import AppHelper
-#    AppHelper.runEventLoop()
 
