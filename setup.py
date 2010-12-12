@@ -7,7 +7,7 @@ from setuptools import setup
 install_requires = []
 setup_requires = []
 
-APP = ['src/geogit/__init__.py']
+APP = ['src/geogit/corelocation.py']
 DATA_FILES = []
 OPTIONS = {'argv_emulation': False}
 
