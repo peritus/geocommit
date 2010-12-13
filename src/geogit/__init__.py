@@ -68,7 +68,17 @@ class GeoGit(object):
         note_file.write(self.format_location())
         note_file.flush()
 
-        system("git notes --ref=geogit add -F " + note_file.name + " HEAD")
+        command = "git "
+
+        if self.git_dir != None:
+            command += '--git-dir=%s ' % self.git_dir
+
+        command += "notes --ref=geogit add -F " + note_file.name + " HEAD"
+
+        print command
+        sys.stdout.flush()
+
+        system(command)
 
         note_file.close()
 
