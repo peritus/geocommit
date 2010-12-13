@@ -17,7 +17,10 @@ def system(cmd):
             return value
 
 class GeoGitFifo(object):
-    def __init__(self, path):
+    def __init__(self, path=None):
+        if path == None:
+             path = os.environ["HOME"] + "/.geogit.sock"
+
         self.path = path
         self.reader = None
         self.writer = None
@@ -57,7 +60,7 @@ class GeoGit(object):
         rev = system("git rev-parse HEAD").strip()
         path = system("git rev-parse --show-toplevel").strip()
 
-        fifo = GeoGitFifo(os.environ["HOME"] + "/.geogit.sock")
+        fifo = GeoGitFifo()
         fifo.write(rev, path)
 
     def attach_note(self):
