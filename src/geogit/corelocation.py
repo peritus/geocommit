@@ -33,7 +33,6 @@ class MacLocation(NSObject):
         myLocMgr.setDesiredAccuracy_(accuracy)
         myLocMgr.startUpdatingLocation()
         stdlog.flush()
-        self.setApplicationBadge_("On")
 
     @objc.signature("v@:")
     def applicationDidResume(self):
