@@ -35,7 +35,8 @@ function geogithub() {
   *   <br style=clear: right;/>
   */
 
-  $('#gitnotes-content').append(
+  $('#gitnotes-content').find('br').css('clear', 'right');
+  $('#gitnotes-content').find('pre').prepend(
     '<img style="float: right;" ' +
     'src="http://maps.google.com/maps/api/staticmap?center=' +
     data.Latitute + ',' + data.Longitude +
