@@ -35,7 +35,7 @@ class GeoGitFifo(object):
         if self.reader is None:
             self.reader = open(self.path, "r")
 
-        values = self.reader.readline().split(" ", 1)
+        values = self.reader.readline().strip('\n\r ').split(" ", 1)
 
         return values
 
@@ -57,8 +57,8 @@ class GeoGit(object):
         pass
 
     def writeToFifo(self):
-        rev = system("git rev-parse HEAD").strip()
-        path = system("git rev-parse --show-toplevel").strip()
+        rev = system("git rev-parse HEAD").strip('\n\r ')
+        path = system("git rev-parse --show-toplevel").strip('\n\r ')
 
         fifo = GeoGitFifo()
         fifo.write(rev, path)
