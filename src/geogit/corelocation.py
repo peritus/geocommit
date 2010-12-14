@@ -67,6 +67,8 @@ Vertical-Accuracy: '''   + str(l.verticalAccuracy())     +  '''
 
         self.attach_note()
 
+        NSApplication.sharedApplication().terminate_(None)
+
     @objc.signature("v@:@")
     def applicationSuspend_(self, event):
         print "suspend called"
