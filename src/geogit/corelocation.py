@@ -1,5 +1,8 @@
 import sys
 
+from datetime import datetime
+from dateutil.parser import parse
+
 import objc
 from objc import YES, NO, NULL
 from Foundation import *
@@ -16,6 +19,15 @@ myLocMgr = CoreLocation.CLLocationManager.alloc().init()
 
 
 class MacLocation(NSObject, GeoGit):
+
+    def last_time(self, timestamp_string, reference_time=None):
+        if reference_time == None:
+            reference_time = datetime.utcnow()
+
+        then = parse(timestamp_string)
+        delta = reference_time - datetime.fromtimestamp(int((then - then.utcoffset()).strftime('%s')))
+
+        return delta.seconds
 
     def format_location(self):
         ''' Implements GeoGit.format_location '''
@@ -41,8 +53,15 @@ Vertical-Accuracy: '''   + str(l.verticalAccuracy())     +  '''
         stdlog.flush()
 
         self.last_known_location = newlocation
+        location_age = self.last_time(str(newlocation.timestamp()))
+
         print self.format_location()
+        print "location age: ", location_age
+
         stdlog.flush()
+
+        if location_age > 60:
+            return # too old
 
         myLocMgr.stopUpdatingLocation()
 
