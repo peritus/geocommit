@@ -5,6 +5,7 @@ import os
 from subprocess import Popen, STDOUT, PIPE
 from shlex import split
 import tempfile
+from distutils.util import get_platform
 
 def system(cmd):
     process = Popen(split(cmd), stderr=STDOUT, stdout=PIPE)
@@ -54,9 +55,11 @@ class GeoGitFifo(object):
 class GeoGit(object):
 
     def __init__(self):
-        pass
+        self.git_dir = None
 
     def writeToFifo(self):
+
+
         rev = system("git rev-parse HEAD").strip('\n\r ')
         path = system("git rev-parse --show-toplevel").strip('\n\r ')
 
@@ -89,9 +92,13 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    geogit = GeoGit()
-    geogit.writeToFifo()
-    #geogit.attach_note()
+    if get_platform().startswith("macosx"):
+        geogit = GeoGit()
+        geogit.writeToFifo()
+    else:
+        from geogit.networkmanager import NetworkManager
+        geogit = NetworkManager()
+        geogit.attach_note()
 
 if __name__ == "__main__":
     sys.exit(main())
