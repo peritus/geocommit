@@ -39,9 +39,9 @@ function geogithub() {
   $('#gitnotes-content').find('pre').prepend(
     '<img style="float: right;" ' +
     'src="http://maps.google.com/maps/api/staticmap?center=' +
-    data.Latitute + ',' + data.Longitude +
+    data.Latitude + ',' + data.Longitude +
     '&zoom=14&size=256x256&format=png&sensor=false&markers=' +
-    data.Latitute + "," + data.Longitude +
+    data.Latitude + "," + data.Longitude +
     '"/>'
   );
 

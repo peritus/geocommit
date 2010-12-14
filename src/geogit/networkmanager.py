@@ -2,6 +2,8 @@ import sys
 import dbus
 import json
 import urllib2
+from geogit import GeoGit
+
 
 #class MacLocation(NSObject):
     #@objc.signature("v@:@@@")
@@ -54,9 +56,10 @@ def frequency_in_khz_to_channel(frequency_khz):
     return -12345 # invalid channel
 
 
-class NetworkManager(object):
+class NetworkManager(GeoGit):
 
     def __init__(self):
+        self.git_dir = None
         self.service_name = "org.freedesktop.NetworkManager";
         self.path = "/org/freedesktop/NetworkManager";
         self.interface = "org.freedesktop.NetworkManager";
@@ -161,6 +164,22 @@ class NetworkManager(object):
             self.access_token = res["access_token"]
 
         return res
+
+    def format_location(self):
+        l = self.get_location()["location"]
+        print l
+        #l["altitude"]
+        #l["altitude_accuracy"]
+        return '''\
+Generator: GeoGit v0.9
+Source: NetworkManager with Google Geolocation
+Altitude: '''            + str("")          +  '''
+Horizontal-Accuracy: ''' + str(l["accuracy"])          +  '''
+Latitude: '''            + str(l["latitude"])          +  '''
+Longitude: '''           + str(l["longitude"])         +  '''
+Timestamp: '''           + str("")                     +  '''
+Vertical-Accuracy: '''   + str("") +  '''
+''' # address
 
 
 def main():
