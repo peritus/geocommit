@@ -7,8 +7,8 @@ from shlex import split
 import tempfile
 from distutils.util import get_platform
 
-def system(cmd):
-    process = Popen(split(cmd), stderr=STDOUT, stdout=PIPE)
+def system(cmd, cwd=None):
+    process = Popen(split(cmd), stderr=STDOUT, stdout=PIPE, cwd=cwd)
     # from http://stackoverflow.com/questions/1388753/how-to-get-output-from-subprocess-popen
     value = ""
     while True:
@@ -17,88 +17,58 @@ def system(cmd):
         if read == '' and process.poll() != None:
             return value
 
-class GeoGitFifo(object):
-    def __init__(self, path=None):
-        if path == None:
-             path = os.environ["HOME"] + "/.geogit.sock"
-
-        self.path = path
-        self.reader = None
-        self.writer = None
-
-        try:
-            os.mkfifo(path)
-        except OSError, e:
-            # already created
-            pass
-
-    def read(self):
-        if self.reader is None:
-            self.reader = open(self.path, "r")
-
-        values = self.reader.readline().strip('\n\r ').split(" ", 1)
-
-        return values
-
-    def write(self, rev, path):
-        if self.writer is None:
-            self.writer = open(self.path, "w")
-
-        print >> self.writer, rev + " " + path
-
-    def __del__(self):
-        if not self.reader is None:
-            self.reader.close()
-        if not self.writer is None:
-            self.writer.close()
-
 class GeoGit(object):
 
     def __init__(self):
-        self.git_dir = None
+        self.git_bin = system("which git").strip()
+        self.git_dir = system("git rev-parse --show-toplevel").strip('\n\r ')
+        self.git_rev = system("git rev-parse HEAD").strip('\n\r ')
 
-    def writeToFifo(self):
+    def get_location_provider(self):
+        if get_platform().startswith("macosx"):
+            from geogit.corelocation import CoreLocation
+            provider = CoreLocation()
+        else:
+            from geogit.networkmanager import NetworkManager
+            provider = NetworkManager()
 
+        return provider
 
-        rev = system("git rev-parse HEAD").strip('\n\r ')
-        path = system("git rev-parse --show-toplevel").strip('\n\r ')
+    #def writeToFifo(self):
 
-        fifo = GeoGitFifo()
-        fifo.write(rev, path)
+        #fifo = GeoGitFifo()
+        #fifo.write(rev, path)
+
+    def get_note(self):
+        provider = self.get_location_provider()
+        location = provider.get_location()
+        return location.format_long_geocommit()
 
     def attach_note(self):
+        note = self.get_note()
+
         note_file = tempfile.NamedTemporaryFile()
-        note_file.write(self.format_location())
+        note_file.write(note)
         note_file.flush()
 
-        command = "git "
+        command = self.git_bin + " "
 
-        if self.git_dir != None:
-            command += '--git-dir=%s ' % self.git_dir
-
-        command += "notes --ref=geogit add -F " + note_file.name + " HEAD"
+        command += "notes --ref=geogit add -F " + note_file.name + " "
+        command += self.git_rev
 
         print command
         sys.stdout.flush()
 
-        system(command)
+        system(command, self.git_dir)
 
         note_file.close()
-
-    def format_location(self):
-        return "Berlin (0.0, 0.0)"
 
 def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    if get_platform().startswith("macosx"):
-        geogit = GeoGit()
-        geogit.writeToFifo()
-    else:
-        from geogit.networkmanager import NetworkManager
-        geogit = NetworkManager()
-        geogit.attach_note()
+    geogit = GeoGit()
+    geogit.attach_note()
 
 if __name__ == "__main__":
     sys.exit(main())
