@@ -1,14 +1,17 @@
 
 class Location(object):
-    def __init__(self, long, lat, src):
+    def __init__(self, long=None, lat=None, src=None):
+        self.optional_keys = [
+            "alt",
+            "speed",
+            "dir",
+            "hacc",
+            "vacc"
+        ]
+
         self.long = long
         self.lat = lat
         self.src = src
-        self.alt = None
-        self.speed = None
-        self.dir = None
-        self.hacc = None
-        self.vacc = None
 
     def format_geocommit(self, keyval_separator, entry_separator):
         """ Formats the location values separating keys, values and k/v pairs
@@ -26,16 +29,11 @@ class Location(object):
         msg  = "long" + sep + str(self.long) + end
         msg += "lat"  + sep + str(self.lat)  + end
 
-        if not self.alt is None:
-            msg += "alt"   + sep + str(self.alt)   + end
-        if not self.speed is None:
-            msg += "speed" + sep + str(self.speed) + end
-        if not self.dir is None:
-            msg += "dir"   + sep + str(self.dir)   + end
-        if not self.hacc is None:
-            msg += "hacc"  + sep + str(self.hacc)  + end
-        if not self.vacc is None:
-            msg += "vacc"  + sep + str(self.vacc)  + end
+        for attr in self.optional_keys:
+            if hasattr(self, attr):
+                val = getattr(self, attr)
+                if not val is None:
+                    msg += attr + sep + str(val) + end
 
         # no value separator after last value
         msg += "src" + sep + str(self.src)
