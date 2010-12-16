@@ -1,5 +1,9 @@
 from geogit.locationprovider import LocationProvider
 from geogit.location import Location
+import json
+import urllib2
+import sys
+
 
 class WifiLocationProvider(LocationProvider):
     """ Base class for providers using wifi data and google geolocation
@@ -74,6 +78,29 @@ class WifiLocationProvider(LocationProvider):
 
         return location
 
+    def json_request(self, data):
+        """ Sends a JSON request to google geolocation and parses the response
+
+        >>> wlp = WifiLocationProvider()
+        >>> wlp.webservice = "http://unresolvable"
+        >>> wlp.json_request({})
+        """
+        json_request = json.dumps(data, indent=4)
+
+        try:
+            result = urllib2.urlopen(self.webservice, json_request).read()
+        except urllib2.URLError, e:
+            #print >> sys.stderr, e
+            return None
+
+        try:
+            response = json.loads(result)
+        except ValueError, e:
+            #print >> sys.stderr, e
+            return None
+
+        return response
+
     def get_location(self):
         """ Retrieves a location from Google Geolocation API based on Wifi APs.
         """
@@ -82,18 +109,9 @@ class WifiLocationProvider(LocationProvider):
         if not request:
             return None
 
-        json_request = json.dumps(request, indent=4)
+        location = self.json_request(request)
 
-        try:
-            result = urllib2.urlopen(self.webservice, json_request).read()
-        except urllib2.URLError, e:
-            print e
-            return None
-
-        try:
-            location = json.loads(result)
-        except ValueError, e:
-            print e
+        if not location:
             return None
 
         if location.has_key("access_token"):
