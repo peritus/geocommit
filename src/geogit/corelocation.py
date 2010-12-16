@@ -35,16 +35,15 @@ class MacLocation(NSObject, GeoGit):
         l = self.last_known_location
 
         return '''\
-Generator: GeoGit v0.9
-Source: CoreLocation
-Altitude: '''            + str(l.altitude())             +  '''
-Course: '''              + str(l.course())               +  '''
-Horizontal-Accuracy: ''' + str(l.horizontalAccuracy())   +  '''
-Latitude: '''            + str(l.coordinate().latitude)  +  '''
-Longitude: '''           + str(l.coordinate().longitude) +  '''
-Speed: '''               + str(l.speed())                +  '''
-Timestamp: '''           + str(l.timestamp())            +  '''
-Vertical-Accuracy: '''   + str(l.verticalAccuracy())     +  '''
+geogit (1.0)
+src: cl
+lat: '''   + str(l.coordinate().latitude)  +  '''
+long: '''  + str(l.coordinate().longitude) +  '''
+alt: '''   + str(l.altitude())             +  '''
+dir: '''   + str(l.course())               +  '''
+hacc: '''  + str(l.horizontalAccuracy())   +  '''
+speed: ''' + str(l.speed())                +  '''
+vacc: '''  + str(l.verticalAccuracy())     +  '''
 '''
 
     @objc.signature("v@:@@@")

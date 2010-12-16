@@ -27,7 +27,7 @@ Crazy ideas
 
 Geocommit data format (v1.0)
 ============================
-We store a number of keys with values in git notes or hg commits. 
+We store a number of keys with values in git notes or hg commits.
 There is a long and a short format. Both define a set of key/value
 pairs in no particular order. The format version defines the allowed
 keys.
@@ -52,7 +52,8 @@ Version 1.0 of the format defines the keys:
  * lat (required) contains latitude value of a coordinate in WGS84
  * src (required) contains the name of the data provider used to generate the geodata
  * alt (optional) contains altitude in metres
- * speed (optional) speed in metres / second 
+ * speed (optional) speed in metres / second
+ * dir (optional) direction of travel
  * hacc (optional) horizontal accuracy of long/lat values in metres
  * vacc (optional) vertical accuracy of altitude value in metres
 
