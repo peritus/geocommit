@@ -20,8 +20,8 @@ Crazy ideas
  * git geolog foo..bar > foobar.kml
  * Chrome/Safari extension to display google maps all over github
 
-Geocommit data format
-=====================
+Geocommit data format (v1.0)
+============================
 We store a number of keys with values in git notes or hg commits. 
 There is a long and a short format. Both define a set of key/value
 pairs in no particular order. The format version defines the allowed
@@ -29,7 +29,7 @@ keys.
 
 <version> is a version number of the format x.y
 <key> is an alphanumeric lowercase identifier without spaces or other
-      special characters except _
+      special characters except _ and -
 <value> must not contain a linebreak, "," or ";"
 
 The short format is:
