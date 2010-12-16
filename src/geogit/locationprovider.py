@@ -1,3 +1,4 @@
+from distutils.util import get_platform
 
 class LocationProvider(object):
     """ Base class for all location providers which share
@@ -11,6 +12,15 @@ class LocationProvider(object):
         Should be overwritten in specialisations of this class.
         """
         return None
+
+    @staticmethod
+    def new():
+        if get_platform().startswith("macosx"):
+            from geogit.corelocation import CoreLocation
+            return CoreLocation()
+        else:
+            from geogit.networkmanager import NetworkManager
+            return NetworkManager()
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ import os
 from subprocess import Popen, STDOUT, PIPE
 from shlex import split
 import tempfile
-from distutils.util import get_platform
+from geogit.locationprovider import LocationProvider
 
 def system(cmd, cwd=None):
     process = Popen(split(cmd), stderr=STDOUT, stdout=PIPE, cwd=cwd)
@@ -24,23 +24,8 @@ class GeoGit(object):
         self.git_dir = system("git rev-parse --show-toplevel").strip('\n\r ')
         self.git_rev = system("git rev-parse HEAD").strip('\n\r ')
 
-    def get_location_provider(self):
-        if get_platform().startswith("macosx"):
-            from geogit.corelocation import CoreLocation
-            provider = CoreLocation()
-        else:
-            from geogit.networkmanager import NetworkManager
-            provider = NetworkManager()
-
-        return provider
-
-    #def writeToFifo(self):
-
-        #fifo = GeoGitFifo()
-        #fifo.write(rev, path)
-
     def get_note(self):
-        provider = self.get_location_provider()
+        provider = LocationProvider.new()
         location = provider.get_location()
         return location.format_long_geocommit()
 
