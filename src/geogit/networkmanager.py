@@ -4,45 +4,6 @@ import json
 import urllib2
 from geogit import GeoGit
 
-
-#class MacLocation(NSObject):
-    #@objc.signature("v@:@@@")
-    #def locationManager_didUpdateToLocation_fromLocation_(self, manager, newlocation, oldlocation):
-        #print 'got new location'
-        #print newlocation
-        #stdlog.flush()
-
-##    @objc.signature("v@:@")
-##    def locationManager_didFailWithError_(self, error):
-##        print 'error'
-##        print error
-##        stdlog.flush()
-
-    #@objc.signature("v@:@")
-    #def applicationSuspend_(self, event):
-        #print "suspend called"
-        #stdlog.flush()
-
-    #@objc.signature("v@:@")
-    #def applicationDidFinishLaunching_(self, unused):
-        #print "finished launching"
-        #myLocMgr.setDelegate_(self)
-        #accuracy = -1.0
-        #myLocMgr.setDesiredAccuracy_(accuracy)
-        #myLocMgr.startUpdatingLocation()
-        #stdlog.flush()
-        #self.setApplicationBadge_("On")
-
-    #@objc.signature("v@:")
-    #def applicationDidResume(self):
-        #self.terminate()
-
-    #@objc.signature("v@:")
-    #def applicationWillTerminate(self):
-        #print "will terminate"
-        #myLocMgr.stopUpdatingLocation()
-        #self.removeApplicationBadge()
-
 # This function was adapted from Google Chrome Code licensed under 3 clause BSD.
 # Copyright (c) 2010 The Chromium Authors. All rights reserved.
 def frequency_in_khz_to_channel(frequency_khz):
@@ -167,19 +128,13 @@ class NetworkManager(GeoGit):
 
     def format_location(self):
         l = self.get_location()["location"]
-        print l
-        #l["altitude"]
-        #l["altitude_accuracy"]
         return '''\
-Generator: GeoGit v0.9
-Source: NetworkManager with Google Geolocation
-Altitude: '''            + str("")          +  '''
-Horizontal-Accuracy: ''' + str(l["accuracy"])          +  '''
-Latitude: '''            + str(l["latitude"])          +  '''
-Longitude: '''           + str(l["longitude"])         +  '''
-Timestamp: '''           + str("")                     +  '''
-Vertical-Accuracy: '''   + str("") +  '''
-''' # address
+geocommit (1.0)
+source: nmg
+hacc: ''' + str(l["accuracy"])  +  '''
+lat: '''  + str(l["latitude"])  +  '''
+long: ''' + str(l["longitude"]) +  '''
+'''
 
 
 def main():
