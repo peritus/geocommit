@@ -27,10 +27,17 @@ class GeoGit(object):
     def get_note(self):
         provider = LocationProvider.new()
         location = provider.get_location()
+        if location is None:
+            return None
+
         return location.format_long_geocommit()
 
     def attach_note(self):
         note = self.get_note()
+
+        if note is None:
+            print >> sys.stderr, "Geocommit: No location available"
+            return
 
         note_file = tempfile.NamedTemporaryFile()
         note_file.write(note)
