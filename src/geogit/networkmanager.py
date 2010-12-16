@@ -131,9 +131,9 @@ class NetworkManager(GeoGit):
         return '''\
 geocommit (1.0)
 source: nmg
-hacc: ''' + str(l["accuracy"])  +  '''
 lat: '''  + str(l["latitude"])  +  '''
 long: ''' + str(l["longitude"]) +  '''
+hacc: ''' + str(l["accuracy"])  +  '''
 '''
 
 
