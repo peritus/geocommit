@@ -7,7 +7,10 @@ import objc
 from objc import YES, NO, NULL
 from Foundation import *
 from AppKit import *
-from geogit import GeoGitFifo, GeoGit
+from geogit.locationprovider import LocationProvider
+from geogit.location import Location
+
+import json
 
 errlog = open('/tmp/geogiterr.log','w')
 stdlog = open('/tmp/geogitstd.log','w')
@@ -17,8 +20,63 @@ sys.stdout = stdlog
 import CoreLocation
 myLocMgr = CoreLocation.CLLocationManager.alloc().init()
 
+class GeoCommitFifo(object):
+    def __init__(self, name, path=None):
+        if path == None:
+             path = os.environ["HOME"] + "/." + name + ".sock"
 
-class MacLocation(NSObject, GeoGit):
+        self.path = path
+        self.reader = None
+
+        try:
+            os.mkfifo(path)
+        except OSError, e:
+            # already created
+            pass
+
+    def request(self):
+        self.reply("req")
+
+    def waitRequest(self):
+        if self.reader is None:
+            self.reader = open(self.path, "r")
+
+        content = None
+        while content != "req":
+            content = self.reader.readline().strip('\n\r ')
+
+        return True
+
+    def reply(self, reply):
+        writer = open(self.path, "w")
+
+        print >> writer, reply
+
+        writer.close()
+
+    def waitReply(self):
+        if self.reader is None:
+            self.reader = open(self.path, "r")
+
+        content = "req"
+        while content == "req":
+            content = self.reader.readline().strip('\n\r ')
+
+        return content
+
+    def __del__(self):
+        if not self.reader is None:
+            self.reader.close()
+
+class CoreLocationWrapper(LocationProvider):
+    def get_location(self):
+        fifo_request = GeoCommitFifo("geocommit-req")
+        fifo_request.request()
+        fifo_reply = GeoCommitFifo("geocommit-reply")
+        location = json.loads(fifo_reply.waitReply())
+        return location
+
+class MacLocation(NSObject):
 
     def last_time(self, timestamp_string, reference_time=None):
         if reference_time == None:
@@ -29,22 +87,23 @@ class MacLocation(NSObject, GeoGit):
 
         return delta.seconds
 
-    def format_location(self):
-        ''' Implements GeoGit.format_location '''
+    def get_location(self):
+        ''' Implements LocationProvider.get_location '''
 
         l = self.last_known_location
 
-        return '''\
-geogit (1.0)
-src: cl
-lat: '''   + str(l.coordinate().latitude)  +  '''
-long: '''  + str(l.coordinate().longitude) +  '''
-alt: '''   + str(l.altitude())             +  '''
-dir: '''   + str(l.course())               +  '''
-hacc: '''  + str(l.horizontalAccuracy())   +  '''
-speed: ''' + str(l.speed())                +  '''
-vacc: '''  + str(l.verticalAccuracy())     +  '''
-'''
+        location = Location(
+            l.coordinate().latitude,
+            l.coordinate().longitude,
+            "cl")
+
+        location.alt = l.altitude()
+        location.speed = l.speed()
+        location.dir = l.course()
+        location.hacc = l.horizontalAccuracy()
+        location.vacc = l.verticalAccuracy()
+
+        return location
 
     @objc.signature("v@:@@@")
     def locationManager_didUpdateToLocation_fromLocation_(self, manager, newlocation, oldlocation):
@@ -64,9 +123,11 @@ vacc: '''  + str(l.verticalAccuracy())     +  '''
 
         myLocMgr.stopUpdatingLocation()
 
-        self.attach_note()
+        location = self.get_location().format_short_geocommit()
+        fifo_reply = GeoCommitFifo("geocommit-reply")
+        fifo_reply.reply(json.dumps(location))
 
-        NSApplication.sharedApplication().terminate_(None)
+        #NSApplication.sharedApplication().terminate_(None)
 
     @objc.signature("v@:@")
     def applicationSuspend_(self, event):
@@ -78,8 +139,8 @@ vacc: '''  + str(l.verticalAccuracy())     +  '''
         print "finished launching"
         stdlog.flush()
 
-        ggf = GeoGitFifo()
-        self.rev, self.git_dir = ggf.read()
+        fifo_request = GeoCommitFifo("geocommit-req")
+        #fifo_request.waitRequest()
 
         print "read fifo", locals()
         stdlog.flush()
@@ -111,4 +172,4 @@ def main():
     app.run()
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
