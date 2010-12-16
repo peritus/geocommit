@@ -1,8 +1,6 @@
 import sys
 import dbus
-import json
-import urllib2
-from geogit import GeoGit
+from geogit.wifilocationprovider import WifiLocationProvider
 
 # This function was adapted from Google Chrome Code licensed under 3 clause BSD.
 # Copyright (c) 2010 The Chromium Authors. All rights reserved.
@@ -17,10 +15,15 @@ def frequency_in_khz_to_channel(frequency_khz):
     return -12345 # invalid channel
 
 
-class NetworkManager(GeoGit):
+class NetworkManager(WifiLocationProvider):
+    """ Retrieves a list of access points from wifi cards for geolocation
 
+    This test just makes sure get_location does not throw.
+    >>> nm = NetworkManager()
+    >>> void = nm.get_location()
+    """
     def __init__(self):
-        self.git_dir = None
+        super(NetworkManager, self).__init__()
         self.service_name = "org.freedesktop.NetworkManager";
         self.path = "/org/freedesktop/NetworkManager";
         self.interface = "org.freedesktop.NetworkManager";
@@ -94,54 +97,8 @@ class NetworkManager(GeoGit):
 
         return ap_map
 
-    def get_json_request(self):
-        ap_map = self.get_access_points()
-
-        request = dict()
-
-        request["version"] = "1.1.0"
-        request["host"] = "localhost"
-        request["request_address"] = True
-        request["address_language"] = "en_GB"
-        request["wifi_towers"] = ap_map.values()
-
-        if self.access_token:
-            request["access_token"] = self.access_token
-
-        return json.dumps(request, indent=4)
-
-    def get_location(self):
-        req = self.get_json_request()
-
-        try:
-            result = urllib2.urlopen("https://www.google.com/loc/json", req).read()
-        except urllib2.URLError, e:
-            print e
-            return None
-
-        res = json.loads(result)
-
-        if res.has_key("access_token"):
-            self.access_token = res["access_token"]
-
-        return res
-
-    def format_location(self):
-        l = self.get_location()["location"]
-        return '''\
-geocommit (1.0)
-source: nmg
-lat: '''  + str(l["latitude"])  +  '''
-long: ''' + str(l["longitude"]) +  '''
-hacc: ''' + str(l["accuracy"])  +  '''
-'''
-
-
-def main():
-    nm = NetworkManager()
-
-    location = nm.get_location()
-    import ipdb; ipdb.set_trace()
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import doctest
+    doctest.testmod()
+
