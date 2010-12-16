@@ -9,6 +9,11 @@ Developing
 3.) ???
 4.) # happy hacking!
 
+Building the GeoGitHub chrome extension
+---------------------------------------
+
+$> ./bin/crxmake src/geogithub/ path/to/geogithub.pem
+
 Crazy ideas
 ===========
 
