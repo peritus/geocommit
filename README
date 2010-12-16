@@ -20,3 +20,34 @@ Crazy ideas
  * git geolog foo..bar > foobar.kml
  * Chrome/Safari extension to display google maps all over github
 
+Geocommit data format
+=====================
+We store a number of keys with values in git notes or hg commits. 
+There is a long and a short format. Both define a set of key/value
+pairs in no particular order. The format version defines the allowed
+keys.
+
+<version> is a version number of the format x.y
+<key> is an alphanumeric lowercase identifier without spaces or other
+      special characters except _
+<value> must not contain a linebreak, "," or ";"
+
+The short format is:
+geocommit(<version>): <key> <value>, ..., <key> <value>;
+
+The long format is, terminated by an empty line:
+
+geocommit (<version)
+<key>: <value>
+...
+<key>: <value>
+
+Version 1.0 of the format defines the keys:
+ * long (required) contains longitude value of a coordinate in WGS84
+ * lat (required) contains latitude value of a coordinate in WGS84
+ * src (required) contains the name of the data provider used to generate the geodata
+ * alt (optional) contains altitude in metres
+ * speed (optional) speed in metres / second 
+ * hacc (optional) horizontal accuracy of long/lat values in metres
+ * vacc (optional) vertical accuracy of altitude value in metres
+
