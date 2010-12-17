@@ -35,13 +35,13 @@ function geogithub() {
   *   <br style=clear: right;/>
   */
 
+  var point = (data.Latitute || data.lat) + ',' + (data.Longitude || data.long);
+
   $('#gitnotes-content').find('br').css('clear', 'right');
   $('#gitnotes-content').find('pre').prepend(
     '<img style="float: right;" ' +
-    'src="http://maps.google.com/maps/api/staticmap?center=' +
-    data.lat + ',' + data.long +
-    '&zoom=14&size=256x256&format=png&sensor=false&markers=' +
-    data.lat + "," + data.long +
+    'src="http://maps.google.com/maps/api/staticmap?center=' + point +
+    '&zoom=14&size=256x256&format=png&sensor=false&markers=' + point +
     '"/>'
   );
 
