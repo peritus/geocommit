@@ -1,7 +1,7 @@
 {
   "update_url":"http://clients2.google.com/service/update2/crx",
   "name": "GeoGitHub",
-  "version": "0.9",
+  "version": "0.9.1",
   "description": "Displays GeoCommits on GitHub",
   "browser_action": {
     "default_icon": "geogithub.png"
