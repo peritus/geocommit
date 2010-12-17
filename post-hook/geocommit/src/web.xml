@@ -1,0 +1,12 @@
+<web-app>
+  <!-- Servlet class taken from first :aot namespace -->
+  <servlet>
+     <servlet-name>geocommit</servlet-name>
+     <servlet-class>unknown</servlet-class>
+  </servlet>
+  <!-- Servlet is mapped to / by default  -->
+  <servlet-mapping>
+     <servlet-name>geocommit</servlet-name>
+     <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+</web-app>
