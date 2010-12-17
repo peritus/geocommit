@@ -72,12 +72,33 @@ class Location(object):
         """ Parses a string in short format to create an instance of the class.
 
         >>> l = Location.from_short_format(
-        ...     "geocommit(1.0): lat 1, long 2, alt 3, src a")
+        ...     "geocommit(1.0): lat 1, long 2, alt 3, src a;")
         >>> l.format_short_geocommit()
-        "geocommit(1.0): lat 1, long 2, alt 3, src a"
+        'geocommit(1.0): lat 1, long 2, alt 3, src a;'
         """
-        #re.
-        l = Location(1, 2, "a")
+        m = re.search("geocommit\(1\.0\): ((?:[a-zA-Z0-9_-]+ [^,;]+, )*)([a-zA-Z0-9_-]+ [^,;]+);", data)
+
+        if m is None:
+            return None
+
+        values = m.group(1) + m.group(2)
+
+        data = dict()
+
+        for keyval in re.split(",\s+", values):
+            key, val = re.split("\s+", keyval, 1)
+            data[key] = val
+
+        if not data.has_key("lat") or not data.has_key("long") or not data.has_key("src"):
+
+            return None
+
+        l = Location(data["lat"], data["long"], data["src"])
+
+        for key in l.optional_keys:
+            if data.has_key(key):
+                setattr(l, key, data[key])
+
         return l
 
 if __name__ == "__main__":
