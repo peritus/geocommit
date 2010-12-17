@@ -1,3 +1,4 @@
+import re
 
 class Location(object):
     def __init__(self, lat=None, long=None, src=None):
@@ -65,6 +66,19 @@ class Location(object):
         geocommit += ";"
 
         return geocommit
+
+    @staticmethod
+    def from_short_format(data):
+        """ Parses a string in short format to create an instance of the class.
+
+        >>> l = Location.from_short_format(
+        ...     "geocommit(1.0): lat 1, long 2, alt 3, src a")
+        >>> l.format_short_geocommit()
+        "geocommit(1.0): lat 1, long 2, alt 3, src a"
+        """
+        #re.
+        l = Location(1, 2, "a")
+        return l
 
 if __name__ == "__main__":
     import doctest

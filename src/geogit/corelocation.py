@@ -11,8 +11,6 @@ from AppKit import *
 from geogit.locationprovider import LocationProvider
 from geogit.location import Location
 
-import json
-
 errlog = open('/tmp/geogiterr.log','w')
 stdlog = open('/tmp/geogitstd.log','w')
 sys.stderr = errlog
@@ -70,7 +68,7 @@ class CoreLocationWrapper(LocationProvider):
         fifo_request = GeoCommitFifo("geocommit-req")
         fifo_request.request()
         fifo_reply = GeoCommitFifo("geocommit-reply")
-        location = json.loads(fifo_reply.waitReply())
+        location = Location.from_short_format(fifo_reply.waitReply())
         return location
 
 class MacLocation(NSObject):
@@ -121,7 +119,7 @@ class MacLocation(NSObject):
 
         location = self.get_location().format_short_geocommit()
         fifo_reply = GeoCommitFifo("geocommit-reply")
-        fifo_reply.reply(json.dumps(location))
+        fifo_reply.reply(location.format_short_geocommit())
 
         fifo_request = GeoCommitFifo("geocommit-req")
         fifo_request.waitRequest()
