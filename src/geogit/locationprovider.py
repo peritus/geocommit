@@ -16,7 +16,7 @@ class LocationProvider(object):
     @staticmethod
     def new():
         if get_platform().startswith("macosx"):
-            from geogit.corelocation import CoreLocation
+            from geogit.corelocation import CoreLocationWrapper
             return CoreLocationWrapper()
         else:
             from geogit.networkmanager import NetworkManager

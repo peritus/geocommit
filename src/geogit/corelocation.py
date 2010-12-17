@@ -1,4 +1,5 @@
 import sys
+import os
 
 from datetime import datetime
 from dateutil.parser import parse
@@ -41,9 +42,7 @@ class GeoCommitFifo(object):
         if self.reader is None:
             self.reader = open(self.path, "r")
 
-        content = None
-        while content != "req":
-            content = self.reader.readline().strip('\n\r ')
+        content = self.reader.readline().strip('\n\r ')
 
         return True
 
@@ -58,9 +57,7 @@ class GeoCommitFifo(object):
         if self.reader is None:
             self.reader = open(self.path, "r")
 
-        content = "req"
-        while content == "req":
-            content = self.reader.readline().strip('\n\r ')
+        content = self.reader.readline().strip('\n\r ')
 
         return content
 
@@ -113,7 +110,6 @@ class MacLocation(NSObject):
         self.last_known_location = newlocation
         location_age = self.last_time(str(newlocation.timestamp()))
 
-        print self.format_location()
         print "location age: ", location_age
 
         stdlog.flush()
@@ -127,6 +123,10 @@ class MacLocation(NSObject):
         fifo_reply = GeoCommitFifo("geocommit-reply")
         fifo_reply.reply(json.dumps(location))
 
+        fifo_request = GeoCommitFifo("geocommit-req")
+        fifo_request.waitRequest()
+        myLocMgr.startUpdatingLocation()
+
         #NSApplication.sharedApplication().terminate_(None)
 
     @objc.signature("v@:@")
@@ -139,7 +139,7 @@ class MacLocation(NSObject):
         print "finished launching"
         stdlog.flush()
 
-        fifo_request = GeoCommitFifo("geocommit-req")
+        #fifo_request = GeoCommitFifo("geocommit-req")
         #fifo_request.waitRequest()
 
         print "read fifo", locals()
