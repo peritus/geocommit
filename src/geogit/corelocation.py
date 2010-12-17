@@ -65,6 +65,9 @@ class GeoCommitFifo(object):
 
 class CoreLocationWrapper(LocationProvider):
     def get_location(self):
+        super(CoreLocationWrapper, self).__init__()
+        self.name = "cl"
+
         fifo_request = GeoCommitFifo("geocommit-req")
         fifo_request.request()
         fifo_reply = GeoCommitFifo("geocommit-reply")

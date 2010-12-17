@@ -24,6 +24,8 @@ class NetworkManager(WifiLocationProvider):
     """
     def __init__(self):
         super(NetworkManager, self).__init__()
+        self.name = "nmg"
+
         self.service_name = "org.freedesktop.NetworkManager";
         self.path = "/org/freedesktop/NetworkManager";
         self.interface = "org.freedesktop.NetworkManager";
