@@ -26,7 +26,7 @@ setup(
     options={'py2app': OPTIONS},
     version='0.1dev0',
     description="Geolocation for git",
-    author="Nils Adermann <naderman@naderman.de>, Filip Noetzel <filip+geogit@j03.de>",
+    author="Nils Adermann <naderman+geogit@naderman.de>, Filip Noetzel <filip+geogit@j03.de>",
     author_email="filip+geogit@j03.de",
     license="Beerware",
     url="http://pypi.python.org/geogit",
