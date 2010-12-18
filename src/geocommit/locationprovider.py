@@ -22,7 +22,3 @@ class LocationProvider(object):
             from geocommit.networkmanager import NetworkManager
             return NetworkManager()
 
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

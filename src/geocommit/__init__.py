@@ -20,6 +20,10 @@ def system(cmd, cwd=None):
 class GeoGit(object):
 
     def __init__(self):
+        '''
+        >>> 1*2
+        2
+        '''
         self.git_bin = system("which git").strip()
         self.git_dir = system("git rev-parse --show-toplevel").strip('\n\r ')
         self.git_rev = system("git rev-parse HEAD").strip('\n\r ')

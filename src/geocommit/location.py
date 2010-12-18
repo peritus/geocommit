@@ -101,6 +101,3 @@ class Location(object):
 
         return l
 
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

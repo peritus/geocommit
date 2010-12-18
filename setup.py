@@ -42,7 +42,7 @@ if get_platform().startswith('macosx'):
 
 setup(
     name="geocommit",
-    version='0.1dev0',
+    version='0.9dev0',
     description="Geolocation for git",
     author="Nils Adermann <naderman+geocommit@naderman.de>, Filip Noetzel <filip+geocommit@j03.de>",
     author_email="filip+geocommit@j03.de",
@@ -52,5 +52,6 @@ setup(
     packages=['geocommit'],
     package_dir={'': 'src'},
     entry_points = {'console_scripts': ['geocommit = geocommit:main']},
+    extras_require = {'test': ['zope.testing']},
     **extra_args
     )

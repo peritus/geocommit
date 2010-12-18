@@ -119,6 +119,3 @@ class WifiLocationProvider(LocationProvider):
 
         return self.location_from_dict(location)
 
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

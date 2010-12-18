@@ -99,8 +99,3 @@ class NetworkManager(WifiLocationProvider):
 
         return ap_map
 
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
-
