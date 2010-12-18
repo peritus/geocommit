@@ -1,4 +1,3 @@
-import sys
 import dbus
 from geocommit.wifilocationprovider import WifiLocationProvider
 
