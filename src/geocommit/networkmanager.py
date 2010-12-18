@@ -1,6 +1,6 @@
 import sys
 import dbus
-from geogit.wifilocationprovider import WifiLocationProvider
+from geocommit.wifilocationprovider import WifiLocationProvider
 
 # This function was adapted from Google Chrome Code licensed under 3 clause BSD.
 # Copyright (c) 2010 The Chromium Authors. All rights reserved.

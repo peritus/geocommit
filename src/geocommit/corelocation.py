@@ -8,11 +8,11 @@ import objc
 from objc import YES, NO, NULL
 from Foundation import *
 from AppKit import *
-from geogit.locationprovider import LocationProvider
-from geogit.location import Location
+from geocommit.locationprovider import LocationProvider
+from geocommit.location import Location
 
-errlog = open('/tmp/geogiterr.log','w')
-stdlog = open('/tmp/geogitstd.log','w')
+errlog = open('/tmp/geocommiterr.log','w')
+stdlog = open('/tmp/geocommitstd.log','w')
 sys.stderr = errlog
 sys.stdout = stdlog
 

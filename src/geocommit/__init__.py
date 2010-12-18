@@ -5,7 +5,7 @@ import os
 from subprocess import Popen, STDOUT, PIPE
 from shlex import split
 import tempfile
-from geogit.locationprovider import LocationProvider
+from geocommit.locationprovider import LocationProvider
 
 def system(cmd, cwd=None):
     process = Popen(split(cmd), stderr=STDOUT, stdout=PIPE, cwd=cwd)
@@ -36,7 +36,7 @@ class GeoGit(object):
         note = self.get_note()
 
         if note is None:
-            print >> sys.stderr, "Geocommit: No location available"
+            print >> sys.stderr, "GeoCommit: No location available"
             return
 
         note_file = tempfile.NamedTemporaryFile()
@@ -45,7 +45,7 @@ class GeoGit(object):
 
         command = self.git_bin + " "
 
-        command += "notes --ref=geogit add -F " + note_file.name + " "
+        command += "notes --ref=geocommit add -F " + note_file.name + " "
         command += self.git_rev
 
         print command
@@ -59,8 +59,8 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    geogit = GeoGit()
-    geogit.attach_note()
+    geocommit = GeoGit()
+    geocommit.attach_note()
 
 if __name__ == "__main__":
     sys.exit(main())

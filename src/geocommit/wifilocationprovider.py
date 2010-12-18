@@ -1,5 +1,5 @@
-from geogit.locationprovider import LocationProvider
-from geogit.location import Location
+from geocommit.locationprovider import LocationProvider
+from geocommit.location import Location
 import json
 import urllib2
 import sys

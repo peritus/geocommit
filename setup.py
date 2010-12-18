@@ -34,23 +34,23 @@ if get_platform().startswith('macosx'):
 
     extra_args['ext_modules'] = [
         Extension(
-          name = 'geogit.corelocationprovider',
-          sources=['src/geogit/corelocationprovider/geocommit.m', 'src/geogit/corelocationprovider/geocommitdelegate.m'],
+          name = 'geocommit.corelocationprovider-bin',
+          sources=['src/geocommit/corelocationprovider/geocommit.m', 'src/geocommit/corelocationprovider/geocommitdelegate.m'],
           extra_link_args=['-framework', 'Foundation', '-framework', 'CoreLocation']
         ),
     ]
 
 setup(
-    name="geogit",
+    name="geocommit",
     version='0.1dev0',
     description="Geolocation for git",
-    author="Nils Adermann <naderman+geogit@naderman.de>, Filip Noetzel <filip+geogit@j03.de>",
-    author_email="filip+geogit@j03.de",
+    author="Nils Adermann <naderman+geocommit@naderman.de>, Filip Noetzel <filip+geocommit@j03.de>",
+    author_email="filip+geocommit@j03.de",
     license="Beerware",
-    url="http://pypi.python.org/geogit",
+    url="http://pypi.python.org/geocommit",
     keywords="git geo",
-    packages=['geogit'],
+    packages=['geocommit'],
     package_dir={'': 'src'},
-    entry_points = {'console_scripts': ['geogit = geogit:main']},
+    entry_points = {'console_scripts': ['geocommit = geocommit:main']},
     **extra_args
     )
