@@ -4,6 +4,10 @@ from geocommit.wifilocationprovider import WifiLocationProvider
 # This function was adapted from Google Chrome Code licensed under 3 clause BSD.
 # Copyright (c) 2010 The Chromium Authors. All rights reserved.
 def frequency_in_khz_to_channel(frequency_khz):
+    '''
+    >>> frequency_in_khz_to_channel(2412000)
+    1
+    '''
     if frequency_khz >= 2412000 and frequency_khz <= 2472000: # Channels 1-13,
         return (frequency_khz - 2407000) / 5000
     if frequency_khz == 2484000:
