@@ -59,12 +59,22 @@ class GeoGit(object):
 
         note_file.close()
 
-def main(argv=None):
-    if argv is None:
-        argv = sys.argv
-
+def git_geonote():
+    '''
+    Attaches a the current location to the given object
+    '''
     geocommit = GeoGit()
     geocommit.attach_note()
 
-if __name__ == "__main__":
-    sys.exit(main())
+def git_geocommit():
+    '''
+    git commit && git geonote
+    '''
+    raise NotImplementedError()
+
+def git_geosync():
+    '''
+    Syncs geonotes between your local and a remote repository
+    '''
+    raise NotImplementedError()
+

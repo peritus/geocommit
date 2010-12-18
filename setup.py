@@ -51,7 +51,11 @@ setup(
     keywords="git geo",
     packages=['geocommit'],
     package_dir={'': 'src'},
-    entry_points = {'console_scripts': ['geocommit = geocommit:main']},
+    entry_points = {'console_scripts': [
+      'git-geonote = geocommit:git_geonote',
+      'git-geocommit = geocommit:git_geonote',
+      'git-geosync = geocommit:git_geosync',
+     ]},
     extras_require = {'test': ['zope.testing']},
     **extra_args
     )
