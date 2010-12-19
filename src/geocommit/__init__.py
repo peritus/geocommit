@@ -161,7 +161,7 @@ class GeoGit(object):
         self.fetch_and_merge_notes(argv[0])
 
         print "Pushing geocommit notes"
-        forward_system("git push " + remote + " refs/notes/geocommit")
+        forward_system("git push " + argv[0] + " refs/notes/geocommit")
 
     def cmd_postrewrite(self, argv):
         if len(argv) < 1:
