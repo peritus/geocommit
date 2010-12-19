@@ -44,14 +44,14 @@ if get_platform().startswith('macosx'):
 
 setup(
     name="geocommit",
-    version='0.9dev1',
+    version='0.9dev2',
     description="Geolocation for git",
     author="Nils Adermann <naderman+geocommit@naderman.de>, Filip Noetzel <filip+geocommit@j03.de>",
     author_email="filip+geocommit@j03.de",
     license="Beerware",
     url="http://pypi.python.org/geocommit",
     keywords="git geo",
-    packages=['geocommit'],
+    packages=['geocommit', 'geocommit.provider', 'geocommit.provider.corelocation'],
     package_dir={'': 'src'},
     entry_points = {'console_scripts': [
       'git-geonote = geocommit:git_geonote',
