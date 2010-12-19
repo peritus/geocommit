@@ -40,6 +40,8 @@ if get_platform().startswith('macosx'):
         ),
     ]
 
+    extra_args['zip_safe'] = False # because of the above binary
+
 setup(
     name="geocommit",
     version='0.9dev0',
