@@ -15,8 +15,6 @@
   if(count >= 2) {
     exit(0);
   }
-
-  NSLog(@"%d", count);
 }
 
 @end
