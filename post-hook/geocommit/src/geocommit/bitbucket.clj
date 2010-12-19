@@ -31,9 +31,9 @@
 	  (if (and (is-tracked? url) (vector? commits))
 	    (if-let [ctx (parse-bitbucket-update url commits)]
 	      (if-let [res (couch-bulk-update *couchdb* ctx)]
-		"done" "error")
-	      "no commit with geocommt found")
-	    "not yet implemented")))
+		{:status 201} {:status 400})
+	      {:status 200})
+	    {:status 200})))
   (route/not-found "not a valid request"))
 
 (defservice main-routes)
