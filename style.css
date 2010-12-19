@@ -191,7 +191,7 @@ td, th {
 
 #getting-involved {
     background-image: url('img/getting-involved.png');
-    height: 19px;
+    height: 18px;
 }
 
 #the-geocommit-format {
@@ -204,9 +204,28 @@ td, th {
     height: 19px;
 }
 
+input {
+    margin: 5px;
+    border: 1px solid #b0b0b0;
+    padding: 3px;
+    height: 20px;
+    width: 250px;
+    color: #828282;
+}
+
+#signup {
+    margin: 5px;
+    border: 0px;
+    background-color: transparent;
+    background-repeat: none;
+    background-image: url('img/signup.png');
+    width: 140px;
+    height: 44px;
+}
+
 #interact {
     background-image: url('img/interact.png');
-    height: 19px;
+    height: 14px;
 }
 
 #clearing {
