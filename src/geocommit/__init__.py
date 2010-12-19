@@ -42,8 +42,6 @@ class GeoGit(object):
         command += "notes --ref=geocommit add -F " + note_file.name + " "
         command += self.git_rev
 
-        print command
-        sys.stdout.flush()
 
         system(command, self.git_dir)
 

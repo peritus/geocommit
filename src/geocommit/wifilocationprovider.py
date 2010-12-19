@@ -90,13 +90,11 @@ class WifiLocationProvider(LocationProvider):
         try:
             result = urllib2.urlopen(self.webservice, json_request).read()
         except urllib2.URLError, e:
-            #print >> sys.stderr, e
             return None
 
         try:
             response = json.loads(result)
         except ValueError, e:
-            #print >> sys.stderr, e
             return None
 
         return response
