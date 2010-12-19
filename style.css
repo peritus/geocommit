@@ -25,8 +25,9 @@ a:hover {
     color: #3e9aef;
 }
 
-img {
-    border: 0px;
+.column img {
+    margin: 10px 0px 15px 0px;
+    border: 1px solid #a0a0a0;
 }
 
 pre {
@@ -70,10 +71,10 @@ td, th {
     padding: 0px 10px 0px 20px;
 }
 
-.column img {
-    margin: 10px 0px 15px 0px;
+.middle img {
     float: right;
     clear: both;
+    border: 0px;
 }
 
 .middle p {
