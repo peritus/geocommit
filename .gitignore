@@ -4,3 +4,6 @@
 /develop-eggs/
 /dist/
 /parts/
+/src/geocommit.egg-info
+/src/geocommit/provider/corelocation/geocommit
+
