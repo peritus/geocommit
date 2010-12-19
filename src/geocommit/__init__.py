@@ -9,7 +9,7 @@ from subprocess import Popen, PIPE
 
 from geocommit.locationprovider import LocationProvider
 
-from geocommit.util import system, forward_system
+from geocommit.util import system, system_exit_code, forward_system
 
 class GeoGit(object):
 
@@ -113,22 +113,37 @@ class GeoGit(object):
         if len(argv) < 1:
             usage("push")
 
-        remote = argv[1]
+        remote = argv[0]
 
-        system("git fetch " + remote + " refs/notes/geocommit")
-        system("git stash save -m \"geocommit temporary stash\"")
+        print "Fetching geocommit notes"
+        forward_system("git fetch " + remote + " refs/notes/geocommit")
 
-        current_rev = system("git rev-parse HEAD").strip('\n\r ')
+        #local_changes = system("git rev-list FETCH_HEAD..refs/notes/geocommit").strip('\n\r ')
+        remote_changes = system("git rev-list refs/notes/geocommit..FETCH_HEAD").strip('\n\r ')
 
-        system("git checkout refs/notes/geocommit")
-        system("git merge --strategy=recursive -X theirs FETCH_HEAD")
-        rev = system("git rev-parse HEAD").strip('\n\r ')
-        system("git update-ref refs/notes/geocommit " + rev)
+        if remote_changes:
 
-        system("git checkout " + current_rev)
-        system("git stash apply")
-        system("git push " + argv[1] + " refs/notes/geocommit")
+            system_exit_code("git stash save -m \"geocommit temporary stash\"")
+
+            current_rev = system("git symbolic-ref -q HEAD").strip('\n\r ')
+
+            if not current_rev:
+                current_rev = system("git rev-parse HEAD").strip('\n\r ')
+            elif current_rev.find("refs/heads/") == 0:
+                current_rev = current_rev[len("refs/heads/"):]
+
+            system_exit_code("git checkout refs/notes/geocommit")
+            print "Merging geocommit notes"
+            system_exit_code("git merge --strategy=recursive -X theirs FETCH_HEAD")
+            rev = system("git rev-parse HEAD").strip('\n\r ')
+            system_exit_code("git update-ref refs/notes/geocommit " + rev)
+
+            print "Restoring working diretory"
+            system_exit_code("git checkout " + current_rev)
+            system_exit_code("git stash apply")
+
         print "Pushing geocommit notes"
+        forward_system("git push " + remote + " refs/notes/geocommit")
 
 def usage(cmd):
     print >> sys.stderr, "Usage: git geo " + cmd
