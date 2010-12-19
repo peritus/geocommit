@@ -37,11 +37,11 @@ class GeoGit(object):
         note_file.write(note)
         note_file.flush()
 
-        command = self.git_bin + " "
-
-        command += "notes --ref=geocommit add -F " + note_file.name + " "
-        command += self.git_rev
-
+        command = "%(git_bin)s notes --ref=geocommit add -F %(note_filename)s %(git_rev)s" % {
+          'git_bin': self.git_bin,
+          'git_rev': self.git_rev,
+          'note_filename': note_file.name,
+        }
 
         system(command, self.git_dir)
 
