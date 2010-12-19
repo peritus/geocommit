@@ -34,8 +34,8 @@ if get_platform().startswith('macosx'):
 
     extra_args['ext_modules'] = [
         Extension(
-          name = 'geocommit.corelocationprovider-bin',
-          sources=['src/geocommit/corelocationprovider/geocommit.m', 'src/geocommit/corelocationprovider/geocommitdelegate.m'],
+          name = 'geocommit.provider.corelocation.geocommit',
+          sources=['src/geocommit/provider/corelocation/geocommit.m', 'src/geocommit/provider/corelocation/geocommitdelegate.m'],
           extra_link_args=['-framework', 'Foundation', '-framework', 'CoreLocation']
         ),
     ]

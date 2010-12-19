@@ -16,8 +16,8 @@ class LocationProvider(object):
     @staticmethod
     def new():
         if get_platform().startswith("macosx"):
-            from geocommit.corelocation import CoreLocationWrapper
-            return CoreLocationWrapper()
+            from geocommit.provider.corelocation import CoreLocationProvider
+            return CoreLocationProvider()
         else:
             from geocommit.networkmanager import NetworkManager
             return NetworkManager()
