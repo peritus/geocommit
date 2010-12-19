@@ -47,22 +47,31 @@ class GeoGit(object):
 
         note_file.close()
 
-def git_geonote():
+def git_geo():
     '''
     Attaches a the current location to the given object
     '''
-    geocommit = GeoGit()
-    geocommit.attach_note()
+    if len(sys.argv) < 2:
+        print >> sys.stderr, "Usage: git geo note"
+        sys.exit(1)
 
-def git_geocommit():
-    '''
-    git commit && git geonote
-    '''
-    raise NotImplementedError()
+    if sys.argv[1] == 'note':
+        geocommit = GeoGit()
+        geocommit.attach_note()
+        exit(0)
 
-def git_geosync():
-    '''
-    Syncs geonotes between your local and a remote repository
-    '''
-    raise NotImplementedError()
+    elif sys.argv[1] == 'commit':
+        raise NotImplementedError()
+
+    elif sys.argv[1] == 'push':
+        raise NotImplementedError()
+
+    elif sys.argv[1] == 'pull':
+        raise NotImplementedError()
+
+    elif sys.argv[1] == 'init':
+        raise NotImplementedError()
+
+    print >> sys.stderr, "Usage: git geo note"
+    sys.exit(1)
 
