@@ -39,8 +39,10 @@ def forward_system(cmd, read_stdin=False):
         output = process.communicate(in_data)
         if output[0]:
             sys.stdout.write(output[0])
+            sys.stdout.flush()
         if output[1]:
             sys.stderr.write(output[1])
+            sys.stderr.flush()
 
         ret = process.poll()
 
