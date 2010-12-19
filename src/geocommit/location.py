@@ -67,6 +67,9 @@ class Location(object):
 
         return geocommit
 
+    def __repr__(self):
+        return '<Location(%s)>' % self.format_short_geocommit()
+
     @staticmethod
     def from_short_format(data):
         """ Parses a string in short format to create an instance of the class.
