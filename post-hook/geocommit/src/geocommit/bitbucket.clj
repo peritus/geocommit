@@ -23,7 +23,7 @@
       nil ctx)))
 
 (defroutes main-routes
-  (POST "/" [payload]
+  (POST "*" [payload]
 	(let [json (read-json payload)
 	      commits (json :commits)
 	      repo (json :repository)
