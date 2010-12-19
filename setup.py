@@ -44,7 +44,7 @@ if get_platform().startswith('macosx'):
 
 setup(
     name="geocommit",
-    version='0.9dev0',
+    version='0.9dev1',
     description="Geolocation for git",
     author="Nils Adermann <naderman+geocommit@naderman.de>, Filip Noetzel <filip+geocommit@j03.de>",
     author_email="filip+geocommit@j03.de",
