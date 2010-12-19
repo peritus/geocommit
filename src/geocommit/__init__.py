@@ -118,8 +118,8 @@ class GeoGit(object):
         print "Fetching geocommit notes"
         forward_system("git fetch " + remote + " refs/notes/geocommit")
 
-        #local_changes = system("git rev-list FETCH_HEAD..refs/notes/geocommit").strip('\n\r ')
-        remote_changes = system("git rev-list refs/notes/geocommit..FETCH_HEAD").strip('\n\r ')
+        #local_changes = system("git rev-list --max-count=1 FETCH_HEAD..refs/notes/geocommit").strip('\n\r ')
+        remote_changes = system("git rev-list --max-count=1 refs/notes/geocommit..FETCH_HEAD").strip('\n\r ')
 
         if remote_changes:
 
