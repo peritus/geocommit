@@ -110,6 +110,24 @@ class GeoGit(object):
         print "Fetching geocommit notes"
 
     def cmd_push(self, argv):
+        if len(argv) < 1:
+            usage("push")
+
+        remote = argv[1]
+
+        system("git fetch " + remote + " refs/notes/geocommit")
+        system("git stash save -m \"geocommit temporary stash\"")
+
+        current_rev = system("git rev-parse HEAD").strip('\n\r ')
+
+        system("git checkout refs/notes/geocommit")
+        system("git merge --strategy=recursive -X theirs FETCH_HEAD")
+        rev = system("git rev-parse HEAD").strip('\n\r ')
+        system("git update-ref refs/notes/geocommit " + rev)
+
+        system("git checkout " + current_rev)
+        system("git stash apply")
+        system("git push " + argv[1] + " refs/notes/geocommit")
         print "Pushing geocommit notes"
 
 def usage(cmd):
