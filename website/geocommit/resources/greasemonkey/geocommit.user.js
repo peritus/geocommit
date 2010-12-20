@@ -237,9 +237,10 @@ function geocommitVisualize() {
 
         var point = (data.Latitute || data.lat) + ',' + (data.Longitude || data.long);
 
-        $('#gitnotes-content').find('br').css('clear', 'right');
-        $('#gitnotes-content').find('pre').prepend(
-            getMapHtml(point, 512, 256, 'float: right;')
+        $('#commit div.group div.envelope div.machine').append(
+            '<div style="padding-top:15px;background-color: #eaf2f5;' +
+            'margin-left:-125px;">' + getMapHtml(point, 320, 200, null) +
+            '</div>'
         );
     }
     // bitbucket
