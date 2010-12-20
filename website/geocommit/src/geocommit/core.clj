@@ -14,7 +14,7 @@
 (def *geocommit-subex*
      #"(long|lat|hacc|src) ([\d\w\.]+),")
 
-(defstruct commit :repository :commit :message :author :latitude :longitude :horizontal-accurancy :source)
+(defstruct commit :repository :commit :message :author :latitude :longitude :horizontal-accurancy :source :type)
 
 (defn isodate
   ([] (isodate (Date.)))
@@ -32,4 +32,4 @@
 	   (apply merge (map #(hash-map (get %1 1) (get %1 2))
 			     (re-seq *geocommit-subex* options)))
 	   {k v})]
-      (struct commit repo hash message author (number lat) (number long) (number hacc) src))))
+      (struct commit repo hash message author (number lat) (number long) (number hacc) src "geocommit"))))

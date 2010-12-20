@@ -1,0 +1,4 @@
+(ns geocommit.config)
+
+(def *databases* {:invites "http://localhost/invites"
+     	          :geocommits "http://localhost/geocommits"})
