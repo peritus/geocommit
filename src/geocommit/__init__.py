@@ -195,10 +195,12 @@ def git_geo():
 
     geogit = GeoGit()
 
-    f = getattr(geogit, "cmd_" + sys.argv[1])
-    if f and callable(f):
-        f(sys.argv[2:])
-        sys.exit(0)
+    cmd = "cmd_" + sys.argv[1]
+    if hasattr(geogit, cmd):
+        f = getattr(geogit, cmd)
+        if callable(f):
+            f(sys.argv[2:])
+            sys.exit(0)
 
     usage(None)
     sys.exit(1)
