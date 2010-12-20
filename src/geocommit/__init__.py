@@ -121,13 +121,18 @@ class GeoGit(object):
     def cmd_note(self, argv):
         note = self.get_note()
 
+        git_rev = self.git_rev
+
+        if len(argv) > 0:
+            git_rev = argv[0]
+
         if note is None:
             print >> sys.stderr, "Geocommit: No location available."
             print >> sys.stderr, "           Retry annotating your commit with"
-            print >> sys.stderr, "           git geo note " + self.git_rev
+            print >> sys.stderr, "           git geo note " + git_rev
             return
 
-        self.add_note(self.git_rev, note)
+        self.add_note(git_rev, note)
 
     def cmd_setup(self, argv):
         where = ""
