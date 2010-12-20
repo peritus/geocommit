@@ -3,6 +3,10 @@ from subprocess import Popen, STDOUT, PIPE
 from shlex import split
 
 def system(cmd, cwd=None):
+    ret, value = system_exit_code(cmd, cwd)
+    return value
+
+def system_exit_code(cmd, cwd=None):
     if isinstance(cmd, basestring):
         cmd = split(cmd)
 
@@ -12,8 +16,10 @@ def system(cmd, cwd=None):
     while True:
         read = process.stdout.read(1)
         value += read
-        if read == '' and process.poll() != None:
-            return value
+        if read == '':
+            result = process.poll()
+            if result != None:
+                return result, value
 
 def forward_system(cmd, read_stdin=False):
     if isinstance(cmd, basestring):
@@ -33,8 +39,10 @@ def forward_system(cmd, read_stdin=False):
         output = process.communicate(in_data)
         if output[0]:
             sys.stdout.write(output[0])
+            sys.stdout.flush()
         if output[1]:
             sys.stderr.write(output[1])
+            sys.stderr.flush()
 
         ret = process.poll()
 
