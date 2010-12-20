@@ -1,7 +1,7 @@
 (ns geocommit.app_servlet
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use compojure.core
-	[geocommit.bitbucket :only [app-hook]]
+	[geocommit.hook :only [app-hook]]
 	[geocommit.signup :only [app-verify-hook app-signup]])
   (:use [appengine-magic.servlet :only [make-servlet-service-method]]
 	[appengine-magic.core :as ae])

@@ -2,7 +2,7 @@
 					; (c) 2010 the geocommit project
 					; (c) 2010 David Soria Parra
 					; Licensed under the terms of the MIT License
-(ns geocommit.bitbucket
+(ns geocommit.hook
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
 	geocommit.config
