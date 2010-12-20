@@ -5,12 +5,12 @@
 (ns geocommit.bitbucket
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
-	compojure.core
 	experimentalworks.couchdb
 	clojure.contrib.logging
 	clojure.contrib.json
 	[ring.util.servlet :only [defservice]])
-  (:require [compojure.route :as route]))
+  (:require [compojure.route :as route]
+	    [appengine-magic.core :as ae]))
 
 (defn is-tracked? [repo] true)
 
@@ -22,18 +22,15 @@
     (if (empty? ctx)
       nil ctx)))
 
-(defroutes main-routes
-  (POST "*" [payload]
-	(let [json (read-json payload)
-	      commits (json :commits)
-	      repo (json :repository)
-	      url (str "http://bitbucket.org" (repo :absolute_url))]
-	  (if (and (is-tracked? url) (vector? commits))
-	    (if-let [ctx (parse-bitbucket-update url commits)]
-	      (if-let [res (couch-bulk-update *couchdb* ctx)]
-		{:status 201} {:status 400})
-	      {:status 200})
-	    {:status 200})))
-  (route/not-found "not a valid request"))
 
-(defservice main-routes)
+ (defn app-hook [payload]
+      (let [json (read-json payload)
+	    commits (json :commits)
+	    repo (json :repository)
+	    url (str "http://bitbucket.org" (repo :absolute_url))]
+	(if (and (is-tracked? url) (vector? commits))
+	  (if-let [ctx (parse-bitbucket-update url commits)]
+	    (if-let [res (couch-bulk-update *couchdb* ctx)]
+	      {:status 201} {:status 400})
+	    {:status 200})
+	  {:status 200})))

@@ -124,3 +124,5 @@
 	 (mspit (.getOutputStream conn) data)
 	 (when-let [res (build-result conn)]
 	   res)))))
+
+					; (defn can-rollback [bla]
