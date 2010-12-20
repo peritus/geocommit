@@ -10,7 +10,8 @@
                      [swank-clojure "1.2.0"]
                      [ring/ring-jetty-adapter "0.3.4"]
    		             [uk.org.alienscience/leiningen-war "0.0.11"]]
-  :aot [geocommit.bitbucket geocommit.core geocommit.signup experimentalworks.couchdb]
+  :aot [geocommit.bitbucket geocommit.core geocommit.signup
+        experimentalworks.couchdb]
   :compile-path "war/WEB-INF/classes"
   :library-path "war/WEB-INF/lib"
   :autodoc { :name "geocommit", :page-title "geocommit post service hook",

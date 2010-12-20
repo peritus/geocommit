@@ -33,8 +33,9 @@ $(document).ready(function() {
 
     $('#invite').click(function() { 
         $('#indicator').css('visibility', 'visible');
+        $('#indicator').fadeIn(500);
         $.ajax({
-            url: "http://hooks.geocommit.com/signup/",
+            url: "/signup/",
             type: "POST",
             context: document.body,
             data: {mailaddr: $('#mail').val()},

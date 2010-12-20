@@ -8,8 +8,9 @@
   (:use	clojure.contrib.json,
 	clojure.contrib.base64,
 	clojure.contrib.logging)
+  (:require [clojure.contrib.trace :as t])
   (:import (java.io InputStreamReader BufferedReader PrintWriter BufferedWriter OutputStreamWriter)
-	   (java.net URL)))
+	   (java.net URL URLEncoder)))
 
 ; evil workaround for appengine. we cannot use contrib.duck-streams as
 ; they use Socket which is forbidden
@@ -56,6 +57,7 @@
 	 (.setRequestProperty "User-Agent" "Clojure CouchDB Client 1.0.0")
 	 (.setRequestProperty "Connection" "Close")
 	 (.setRequestMethod (mapping method))
+	 (.setInstanceFollowRedirects false)
 	 (.setDoOutput true)
 	 (.setDoInput true)
 	 (.connect))
@@ -103,10 +105,22 @@
   (with-conn [conn (couch-connection url :delete)]
     (build-result conn)))
 
+(defn to-param [col]
+  (apply str
+	 (interpose "&"
+		    (map #(str (name (key %1)) "=" (URLEncoder/encode (json-str (val %1)))) col))))
+
+(defn- keyify [res]
+  (apply merge
+	 (map #(hash-map (%1 :id) %1) res)))
+
 (defn couch-view
   "Returns a view with proper key value mappings"
-  [url design view]
-  (let [res (couch-get url (str "_design/" design "/_view/" view))]
-    (if (contains? res "rows")
-      (apply merge
-	     (map #(hash-map (%1 "key") (%1 "value")) (res "rows"))))))
+  ([url design view]
+     (couch-get (str url "/_design/" design "/_view" view {})))
+  ([url design view keys options]
+     (let [data (json-str {:keys keys})]
+       (with-conn [conn (couch-connection (str url "/_design/" design "/_view/" view "?" (to-param options)) :post)]
+	 (mspit (.getOutputStream conn) data)
+	 (when-let [res (build-result conn)]
+	   res)))))
