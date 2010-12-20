@@ -5,7 +5,6 @@
 (ns geocommit.signup
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
-	geocommit.mail
 	compojure.core
 	experimentalworks.couchdb
 	clojure.contrib.logging
