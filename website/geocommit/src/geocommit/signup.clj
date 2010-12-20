@@ -5,9 +5,12 @@
 (ns geocommit.signup
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
+	geocommit.mail
+	compojure.core
 	experimentalworks.couchdb
 	clojure.contrib.logging
 	clojure.contrib.json
+	clojure.contrib.java-utils
 	[ring.util.servlet :only [defservice]])
   (:import (org.apache.commons.validator EmailValidator)
 	   (java.util UUID))
@@ -42,10 +45,10 @@
 (defn app-signup [mailaddr]
   (let [code (create-verify-code)]
     (if (validate-email mailaddr)
-      (can-rollback [res (couch-add *couchdb*
-				    (struct invite
-					    (str "mail:" mailaddr)
-					    (isodate) mailaddr nil false code false))]
+      (can-rollback *couchdb* (couch-add
+			       (struct invite
+				       (str "mail:" mailaddr)
+				       (isodate) mailaddr nil false code false))
 		    (mail/send (mail/make-message
 				:from "experimentalworks@googlemail.com"
 				:to mailaddr
