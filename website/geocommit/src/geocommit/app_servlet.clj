@@ -10,7 +10,7 @@
 
 
 (defroutes handler
-  (POST "/hook*" [payload] (app-hook payload))
+  (POST "/api*" [payload] (app-hook payload))
   (GET "/signup/verify/:code" [code] (app-verify-hook code))
   (POST "/signup*" [mailaddr] (app-signup mailaddr))
   (route/not-found "not a valid request"))
