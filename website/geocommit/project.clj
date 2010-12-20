@@ -8,11 +8,8 @@
 		 [ring/ring "0.3.5"]]
   :dev-dependencies [[autodoc "0.7.1"]
                      [swank-clojure "1.2.0"]
-                     [ring/ring-jetty-adapter "0.3.4"]
-   		             [uk.org.alienscience/leiningen-war "0.0.11"]]
-  :aot [geocommit.bitbucket geocommit.core geocommit.signup experimentalworks.couchdb]
-  :compile-path "war/WEB-INF/classes"
-  :library-path "war/WEB-INF/lib"
+		     [appengine-magic "0.3.1"]]
+  :repositories ["java" "http://download.java.net/maven/2/"]
   :autodoc { :name "geocommit", :page-title "geocommit post service hook",
   	     :copyright "2010 David Soria Parra"})
 
