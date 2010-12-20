@@ -2,7 +2,7 @@ function geogithub() {
   var data = {};
 
   $('#gitnotes-content').find('h3').each(function(i, el){
-      if( 'geocommit' !== $(el).text() | 'geogit' !== $(el).text() ) {
+      if( 'geocommit' !== $(el).text() && 'geogit' !== $(el).text() ) {
           return;
       }
 

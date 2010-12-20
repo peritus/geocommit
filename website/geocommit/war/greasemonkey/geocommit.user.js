@@ -2,16 +2,18 @@
 // @name Geocommit Script
 // @namespace http://geocommit.com/
 // @description This script visualizes geocommits on github and bitbucket
+// @include https://github.com/*
 // @include http://github.com/*
+// @include https://bitbucket.org/*
 // @include http://bitbucket.org/*
-// @require http://www.geocommit.com/greasemonkey/jquery.min.js
+// @require http://www.geocommit.com/greasemonkey/jquery-1.4.4-greasemonkey.js
 // ==/UserScript==
 
 function geogithub() {
   var data = {};
 
   $('#gitnotes-content').find('h3').each(function(i, el){
-      if( 'geocommit' !== $(el).text() | 'geogit' !== $(el).text() ) {
+      if( 'geocommit' !== $(el).text() && 'geogit' !== $(el).text() ) {
           return;
       }
 
