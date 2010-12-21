@@ -1,8 +1,10 @@
-					; geocommit signup
+					; geocommit.com HTTP signup API
 					; (c) 2010 The Geocommit Project
 					; (c) 2010 David Soria Parra
 					; Licensed under the terms of the MIT License
-(ns geocommit.signup
+(ns #^{:doc "HTTP signup API functions",
+       :author "David Soria Parra"}
+  geocommit.signup
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
 	geocommit.config
@@ -22,7 +24,9 @@
 
 (defstruct invite :_id :date :mail :invitecode :active :verifycode :verified :type)
 
-(defn- validate-email [mail]
+(defn- validate-email
+  "Check if the given email address is valid"
+  [mail]
   (.isValid (EmailValidator/getInstance) mail))
 
 (defn- create-verify-code []
@@ -34,14 +38,18 @@
       (first (res :rows)))
     nil))
 
-(defn app-verify-hook [code]
+(defn app-verify-hook
+  "API entry point to verify a signup code."
+  [code]
   (if-let [res (verify-code code)]
     (do
       (couch-update *couchdb* (res :id) (assoc (res :doc) :verified true))
       {:status 200 :body "Thank you. Verification successful"})
     {:status 200 :body "Cannot verify."}))
 
-(defn app-signup [mailaddr]
+(defn app-signup
+  "API entry point to signup a mail address."
+  [mailaddr]
   (let [code (create-verify-code)]
     (if (and
 	 (validate-email mailaddr)

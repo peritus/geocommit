@@ -7,3 +7,4 @@
 /src/geocommit.egg-info
 /src/geocommit/provider/corelocation/geocommit
 website/geocommit/src/geocommit/config.clj
+website/geocommit/autodoc
