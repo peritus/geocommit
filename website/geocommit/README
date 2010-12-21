@@ -1,30 +1,21 @@
-# geocommit post commit hook service
+# geocommit.com HTTP API
 
-This is a post commit hook service that can be used to
-push your geocommit data to the geocommit servers.
-
-## Usage
-
-On bitbucket:
-  Add http://geocommit.appspot.com/ or your own server (if you installed the
-  service) as a POST service.
+This is the implementation of the geocommit.com HTTP API.
 
 ## Installation
 
-Compile the hook:
+You need leiningen. You can obtain the binaries
+here https://github.com/technomancy/leiningen.
+
+Fetch dependencies
+ $ lein deps
+Compile:
  $ lein compile
 Build and deploy a uberwar:
- $ lein uberwar
-
-This requires the leiningen-war plugin.
-
-## Issues
-There is a known issue with recent leiningen. Leiningen will not compile
-compojure correctly, resulting in an unknown class compojure.response.Renderable.
-You need to copy a correctly compiled compojure into the war/WEB-INF/classes
-directory to work around this, or build a uberwar.
+ $ lein appengine-prepare
+ $ appcfg.sh update resources
 
 ## License
 
-Copyright (C) 2010 the geocommit project
+Copyright (C) 2010 The Geocommit Project
 Copyright (C) 2010 David Soria Parra
