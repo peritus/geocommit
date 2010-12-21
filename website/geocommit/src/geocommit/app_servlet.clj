@@ -2,10 +2,10 @@
 					; (c) 2010 The Geocommit Project
 					; (c) 2010 David Soria Parra
 					; Licensed under the terms of the MIT License
-(ns geocommit.app_servlet
-  #^{:doc "HTTP API entry point. This provides the main entry point for all routes to the
+(ns #^{:doc "HTTP API entry point. This provides the main entry point for all routes to the
  services and dispatches the handler functions.",
      :author "David Soria Parra"}
+  geocommit.app_servlet
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use compojure.core
 	[geocommit.hook :only [app-hook]]
