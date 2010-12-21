@@ -14,7 +14,7 @@
 (def *geocommit-subex*
      #"(long|lat|hacc|src) ([\d\w\.]+),")
 
-(defstruct commit :repository :commit :message :author :latitude :longitude :horizontal-accurancy :source :type)
+(defstruct commit :identifier :commit :message :author :latitude :longitude :horizontal-accurancy :source :type)
 
 (defn isodate
   ([] (isodate (Date.)))
