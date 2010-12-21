@@ -46,13 +46,25 @@
       (catch Exception e
 	(raise :type :parse-error)))))
 
+(defn- send-scan
+  "Send a scan to the fetch service"
+  [ident repository]
+  (handler-case :type
+    (:job (string-json (agent/http-agent (t/trace (get-config :api :initscan))
+					 :body (json-str {:identifier ident
+							  :repository-url repository})
+					 :method "POST")))
+    (handle :parse-error
+      (raise :type :service-error))))
+
 (defn- scan
   "Add a scan job to the database"
   [ident name desc repourl vcs]
-  (couch-add *couchdb*
-	     (struct repository
-		     (str "repository:" ident)
-		     ident name desc repourl vcs false "repository")))
+  (and (couch-add *couchdb*
+		  (struct repository
+			  (str "repository:" ident)
+			  ident name desc repourl vcs false "repository"))
+       (send-scan ident repourl)))
   
 (defn- guess-origin
   "Heuristic to determine the origin of the hook request.
@@ -76,11 +88,12 @@
 	{:status 201}
 	{:status 400})
       {:status 200})
-    (scan ident
-	  (-> payload :repository :name)
-	  (-> payload :repository :slug)
-	  (-> payload :repository :absolute_url)
-	  "mercurial")))
+    (if (scan ident
+	      (-> payload :repository :name)
+	      (-> payload :repository :slug)
+	      (-> payload :repository :absolute_url)
+	      "mercurial")
+      {:status 200})))
 
 (defn- ident-to-repository [ident]
   (str "git://" ident " .git"))
@@ -140,26 +153,32 @@
   
 (defn- github [ident payload]
   (if (is-tracked? ident)
-    (if-let [ctx (t/trace (github-update-parser ident (:commits payload)))]
+    (if-let [ctx (github-update-parser ident (:commits payload))]
       (if-let [res (couch-bulk-update *couchdb* ctx)]
 	{:status 201}
 	{:status 400})
       {:status 200})
-    (scan ident
-	  (-> payload :repository :name)
-	  (-> payload :repository :description)
-	  (str "git://" ident ".git")
-	  "git")))
+    (if (scan ident
+	      (-> payload :repository :name)
+	      (-> payload :repository :description)
+	      (str "git://" ident ".git")
+	      "git")
+    {:status 200})))
 
 (defn app-hook
   "API entry point for the github/bitbucket geocommit receive service."
   [rawpayload]
-  (let [payload (read-json rawpayload)]
-    (handler-case :type
+  (if rawpayload
+    (let [payload (read-json rawpayload)]
+      (handler-case :type
 	(condp = (guess-origin payload)
 	    :github (github (ident-from-url (-> payload :repository :url)) payload)
-	    :bitbucket (bitbucket (str "bitbucket.org/"
+	    :bitbucket (bitbucket (str "bitbucket.org"
 				       (-> payload :repository :absolute_url))
 				  payload))
-      (handle :parse-error
-	{:status 400}))))
+	(handle :parse-error
+	  (error (:message *condition*))
+	  {:status 400})
+	(handle :service-error
+	  {:status 400})))
+    {:status 400}))
