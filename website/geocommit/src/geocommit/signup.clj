@@ -5,9 +5,12 @@
 (ns geocommit.signup
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
+	geocommit.config
+	compojure.core
 	experimentalworks.couchdb
 	clojure.contrib.logging
 	clojure.contrib.json
+	clojure.contrib.java-utils
 	[ring.util.servlet :only [defservice]])
   (:import (org.apache.commons.validator EmailValidator)
 	   (java.util UUID))
@@ -15,10 +18,9 @@
 	    [clojure.contrib.trace :as t]
 	    [appengine-magic.services.mail :as mail]))
 
-(def *couchdb*
-     "http://geocommit:geocommit@dsp.couchone.com/invites")
+(def *couchdb* (get-config :database :invites))
 
-(defstruct invite :_id :date :mail :invitecode :active :verifycode :verified)
+(defstruct invite :_id :date :mail :invitecode :active :verifycode :verified :type)
 
 (defn- validate-email [mail]
   (.isValid (EmailValidator/getInstance) mail))
@@ -41,16 +43,18 @@
 
 (defn app-signup [mailaddr]
   (let [code (create-verify-code)]
-    (if (validate-email mailaddr)
-      (can-rollback [res (couch-add *couchdb*
-				    (struct invite
-					    (str "mail:" mailaddr)
-					    (isodate) mailaddr nil false code false))]
-		    (mail/send (mail/make-message
-				:from "experimentalworks@googlemail.com"
-				:to mailaddr
-				:subject "Welcome to geocommit.com. Please verify your invitation request."
-				:text-body (str "Follow the link to verify your invitation request\n\n"
-						"http://geocommit.com/signup/verify/" code))))
+    (if (and
+	 (validate-email mailaddr)
+	 (couch-add *couchdb*
+		    (struct invite
+			    (str "mail:" mailaddr)
+			    (isodate) mailaddr nil false code false "invite")))
+      (do
+	(mail/send (mail/make-message
+		    :from "experimentalworks@googlemail.com"
+		    :to mailaddr
+		    :subject "Welcome to geocommit.com. Please verify your invitation request."
+		    :text-body (str "Follow the link to verify your invitation request\n\n"
+				    "http://geocommit.com/signup/verify/" code)))
 	{:status 201})
-      {:status 400}))
+      {:status 400})))

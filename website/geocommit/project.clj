@@ -9,6 +9,7 @@
   :dev-dependencies [[autodoc "0.7.1"]
                      [swank-clojure "1.2.0"]
 		     [appengine-magic "0.3.1"]]
+  :aot [geocommit.app_servlet]
   :repositories ["java" "http://download.java.net/maven/2/"]
   :autodoc { :name "geocommit", :page-title "geocommit post service hook",
   	     :copyright "2010 David Soria Parra"})

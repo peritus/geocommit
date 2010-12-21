@@ -5,6 +5,7 @@
 (ns geocommit.bitbucket
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
+	geocommit.config
 	experimentalworks.couchdb
 	clojure.contrib.logging
 	clojure.contrib.json
@@ -14,8 +15,7 @@
 
 (defn is-tracked? [repo] true)
 
-(def *couchdb*
-     "http://geocommit:geocommit@dsp.couchone.com/geocommit")
+(def *couchdb* (get-config :database :geocommits))
 
 (defn parse-bitbucket-update [url commits]
   (let [ctx (remove nil? (map #(parse-geocommit url (%1 :node) (%1 :author) (%1 :message)) commits))]
@@ -23,14 +23,15 @@
       nil ctx)))
 
 
- (defn app-hook [payload]
-      (let [json (read-json payload)
-	    commits (json :commits)
-	    repo (json :repository)
-	    url (str "http://bitbucket.org" (repo :absolute_url))]
-	(if (and (is-tracked? url) (vector? commits))
-	  (if-let [ctx (parse-bitbucket-update url commits)]
-	    (if-let [res (couch-bulk-update *couchdb* ctx)]
-	      {:status 201} {:status 400})
-	    {:status 200})
-	  {:status 200})))
+(defn app-hook [payload]
+  (let [json (read-json payload)
+	commits (json :commits)
+	repo (json :repository)
+	url (str "http://bitbucket.org" (repo :absolute_url))]
+    (if (and (is-tracked? url) (vector? commits))
+      (if-let [ctx (parse-bitbucket-update url commits)]
+	(if-let [res (couch-bulk-update *couchdb* ctx)]
+	  {:status 201}
+	  {:status 400})
+	{:status 200})
+      {:status 200})))
