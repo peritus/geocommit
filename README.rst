@@ -33,8 +33,7 @@ pairs in no particular order. The format version defines the allowed
 keys.
 
 <version> is a version number of the format x.y
-<key> is an alphanumeric lowercase identifier without spaces or other
-      special characters except _ and -
+<key> is an alphanumeric lowercase identifier without spaces or other special characters except _ and -
 <value> must not contain a linebreak, "," or ";"
 
 The short format is:
@@ -56,4 +55,3 @@ Version 1.0 of the format defines the keys:
  * dir (optional) direction of travel
  * hacc (optional) horizontal accuracy of long/lat values in metres
  * vacc (optional) vertical accuracy of altitude value in metres
-
