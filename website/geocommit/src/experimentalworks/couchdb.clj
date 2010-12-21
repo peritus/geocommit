@@ -67,7 +67,7 @@
   "Creates a new connection to a CouchDB server. The used method can
    be either :post, :get, :delete, or :put."
   [url method]
-  (if-let [[_ prot user pass url] (re-find #"(https?://)(\w+):(\w+)@(.*)" url)]
+  (if-let [[_ prot user pass url] (re-find #"(https?://)([\w\d]+):([\w\d]+)@(.*)" url)]
     (couch-conn (str prot url) method user pass)
     (couch-conn url method nil nil)))
 
