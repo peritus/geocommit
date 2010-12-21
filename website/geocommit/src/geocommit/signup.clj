@@ -18,7 +18,7 @@
 	    [clojure.contrib.trace :as t]
 	    [appengine-magic.services.mail :as mail]))
 
-(def *couchdb* (get-config :database :invites))
+(def *couchdb* (get-config :databases :invites))
 
 (defstruct invite :_id :date :mail :invitecode :active :verifycode :verified :type)
 

@@ -1,4 +1,11 @@
 (ns geocommit.config)
 
-(def *databases* {:invites "http://localhost/invites"
-     	          :geocommits "http://localhost/geocommits"})
+(def *config* {:databases
+	       {:invites "http://example.com/geocommit-web"
+		:geocommits "http://example.com/geocommit"}
+	       :api
+	       {:fetchservice "http://fetchservice.example.com"
+		:github "http://github.com/api/v2/json"}})
+
+(defmacro get-config [& keys]
+     `(-> ~*config* ~@keys))
