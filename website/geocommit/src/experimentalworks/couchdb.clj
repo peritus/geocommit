@@ -74,7 +74,7 @@
 (defn couch-get
   "Get a document with the given id from the DB."
   [url id]
-  (with-conn [conn (couch-connection (str url "/" id) :get)]
+  (with-conn [conn (couch-connection (str url "/" (URLEncoder/encode id)) :get)]
     (build-result conn)))
 
 (defn couch-update
