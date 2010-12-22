@@ -8,3 +8,9 @@
 /src/geocommit/provider/corelocation/geocommit
 website/geocommit/src/geocommit/config.clj
 website/geocommit/autodoc
+website/geocommit/classes
+website/geocommit/lib
+website/geocommit/resources/WEB-INF
+*~
+*.swp
+
