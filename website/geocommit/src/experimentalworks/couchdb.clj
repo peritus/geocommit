@@ -117,7 +117,7 @@
 (defn couch-view
   "Returns a view with proper key value mappings"
   ([url design view]
-     (couch-get (str url "/_design/" design "/_view" view {})))
+     (couch-get (str url "/_design/" design "/_view/" view) ""))
   ([url design view keys options]
      (let [data (json-str {:keys keys})]
        (with-conn [conn (couch-connection (str url "/_design/" design "/_view/" view "?" (to-param options)) :post)]
