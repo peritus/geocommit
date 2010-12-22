@@ -59,10 +59,10 @@
 			    (isodate) mailaddr nil false code false "invite")))
       (do
 	(mail/send (mail/make-message
-		    :from "experimentalworks@googlemail.com"
+		    :from "geocommit-team@j03.de"
 		    :to mailaddr
 		    :subject "Welcome to geocommit.com. Please verify your invitation request."
-		    :text-body (str "Follow the link to verify your invitation request\n\n"
+		    :text-body (str "Welcome to geocommit.com.\n\nFollow the link to verify your invitation request\n\n"
 				    "http://geocommit.com/signup/verify/" code)))
 	{:status 201})
       {:status 400})))
