@@ -24,9 +24,11 @@ Setup a git post-commit hook in the current git repository to automatically
 attach location information to your commits\&.
 .RE
 .PP
-note
+note [<commit>]
 .RS 4
-Obtain your current location and store it in a git note\&.
+Obtain your current location and store it in a git note referencing the HEAD
+commit. If <commit> is given, the command will store the location for the given
+commit instead of HEAD\&.
 .RE
 .PP
 push <repository>
