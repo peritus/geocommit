@@ -4,7 +4,7 @@ function geocommit_map(z) {
             document.getElementById("map_canvas"),
             {zoom: z,
              center: c,
-             mapTypeId: google.maps.MapTypeId.TERRAIN});
+             mapTypeId: google.maps.MapTypeId.SATELLITE});
     var marker = [];
     $.ajax({url: "/api/geocommits",
             type: "GET",
