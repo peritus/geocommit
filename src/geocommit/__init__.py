@@ -39,6 +39,7 @@ class GeoGit(object):
 
         hooks = {
             "post-commit": ["#!/bin/sh\n", "git geo note\n"],
+            "post-merge": ["#!/bin/sh\n", "git geo note\n"],
             "post-rewrite": ["#!/bin/sh\n", "git geo postrewrite $@\n"]
         }
 
@@ -52,7 +53,7 @@ class GeoGit(object):
             # is geo commit hook?
             f = open(hook, "r")
             lines = f.readlines()
-            if len(lines) > 1 and lines[1] != code[1]:
+            if len(lines) > 3 or (len(lines) > 1 and lines[1] != code[1]):
                 print "Moving existing hook to " + hook + "-partial"
                 print "Installing geocommit hook in " + hook
                 shutil.move(hook, hook + "-partial")
