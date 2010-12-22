@@ -9,12 +9,14 @@
   (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use compojure.core
 	[geocommit.hook :only [app-hook]]
+	[geocommit.api :only [app-api-geocommits]]
 	[geocommit.signup :only [app-verify-hook app-signup]])
   (:use [appengine-magic.servlet :only [make-servlet-service-method]]
 	[appengine-magic.core :as ae])
   (:require [compojure.route :as route]))
 
 (defroutes handler
+  (GET "/api/geocommits" [payload] (app-api-geocommits payload))
   (POST "/api*" [payload] (app-hook payload))
   (GET "/signup/verify/:code" [code] (app-verify-hook code))
   (POST "/signup*" [mailaddr] (app-signup mailaddr))
