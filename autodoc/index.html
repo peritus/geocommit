@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <title>geocommit - Overview</title>
+    <link href="static/favicon.png" rel="icon" />
+    <link href="static/favicon.png" rel="shortcut icon" />
+    <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/wiki.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/internal.css" rel="stylesheet" />
+    <!-- TODO: are we using these (from clojure.org)? If so, add the files -->
+    <script src="file/view/code_highlighter.js" type="text/javascript"></script>
+    <script src="file/view/clojure.js" type="text/javascript"></script>
+    <style>.menuWrapper{height: 36px;}</style>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.wikispaces.com/_/2009051601/s/internal_ie.css" type="text/css" />
+    <![endif]-->
+  </head>
+<!--
+This document was auto-generated from the source by the clojure autodoc system.
+To report errors or ask questions about the overall documentation structure, formatting,
+etc., contact Tom Faulhaber (google mail name: tomfaulhaber).
+For errors in the documentation of a particular namespace, contact the author of that
+namespace.
+-->
+  <body>
+    <div id="AllContentContainer">
+      <div id="Header">
+	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
+	<h1><a title="page header title" id="page-header" href="index.html">geocommit.com HTTP API</a></h1>
+      </div>
+      <div id="leftcolumn"><div style="text-align: center;"></div>
+<div class="menu">
+  <div class="WikiCustomNav WikiElement wiki">
+    <a class="wiki_link" href="index.html">Overview</a><br />
+    <a class="wiki_link" href="api-index.html">API Index</a><br />
+    <a class="wiki_link" href="#">Namespaces:</a>
+    <ul id="left-sidebar-list">
+      <li><a href="experimentalworks.couchdb-api.html" class="wiki_link">experimentalworks.couchdb</a></li><li><a href="geocommit.api-api.html" class="wiki_link">geocommit.api</a></li><li><a href="geocommit.app_servlet-api.html" class="wiki_link">geocommit.app_servlet</a></li><li><a href="geocommit.config-api.html" class="wiki_link">geocommit.config</a></li><li><a href="geocommit.core-api.html" class="wiki_link">geocommit.core</a></li><li><a href="geocommit.hook-api.html" class="wiki_link">geocommit.hook</a></li><li><a href="geocommit.signup-api.html" class="wiki_link">geocommit.signup</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+      <div id="rightcolumn">
+	<div id="Content">
+	  <div class="contentBox"><div class="innerContentBox">
+              <div id="content_view" class="wiki wikiPage">
+                <div id="right-sidebar"><div id="toc">
+  <h1 class="nopad">Table of Contents</h1>
+  <div style="margin-left: 1em;" class="toc-section">
+    <a href="#experimentalworks.couchdb">experimentalworks.couchdb</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#geocommit.api">geocommit.api</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#geocommit.app_servlet">geocommit.app_servlet</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#geocommit.config">geocommit.config</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#geocommit.core">geocommit.core</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#geocommit.hook">geocommit.hook</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#geocommit.signup">geocommit.signup</a>
+    
+    <br />
+  </div>
+</div>
+</div>
+                <div id="content-tag"><h1 id="toc0">An Overview of the <span id="header-project">geocommit</span> API</h1>
+<br />
+<div id="project-description">The geocommit.com HTTP API is a simple rest API
+to store/retrieve geocommits in/from the geocommit.com database</div>
+<br />
+<div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="experimentalworks.couchdb">experimentalworks.couchdb</h2>
+  by <span id="author">David Soria Parra</span><br />
+  <a href="experimentalworks.couchdb-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">A simple CouchDB Wrapper</pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/couch-add" id="var-tag">couch-add</a> </span><span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/couch-bulk-update" id="var-tag">couch-bulk-update</a> </span><span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/couch-connection" id="var-tag">couch-connection</a> </span><span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/couch-delete" id="var-tag">couch-delete</a> </span><span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/couch-get" id="var-tag">couch-get</a> </span><span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/couch-update" id="var-tag">couch-update</a> </span><span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/couch-view" id="var-tag">couch-view</a> </span><span id="var-link"><a href="experimentalworks.couchdb-api.html#experimentalworks.couchdb/with-conn" id="var-tag">with-conn</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.api">geocommit.api</h2>
+  by <span id="author">David Soria Parra</span><br />
+  <a href="geocommit.api-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">HTTP API</pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.app_servlet">geocommit.app_servlet</h2>
+  by <span id="author">David Soria Parra</span><br />
+  <a href="geocommit.app_servlet-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">HTTP API entry point. This provides the main entry point for all routes to the
+services and dispatches the handler functions.</pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.config">geocommit.config</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="geocommit.config-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="geocommit.config-api.html#geocommit.config/get-config" id="var-tag">get-config</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.core">geocommit.core</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="geocommit.core-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="geocommit.core-api.html#geocommit.core/isodate" id="var-tag">isodate</a> </span><span id="var-link"><a href="geocommit.core-api.html#geocommit.core/parse-geocommit" id="var-tag">parse-geocommit</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.hook">geocommit.hook</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="geocommit.hook-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/app-hook" id="var-tag">app-hook</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/github-update-parser" id="var-tag">github-update-parser</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/is-tracked?" id="var-tag">is-tracked?</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/string-json" id="var-tag">string-json</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.signup">geocommit.signup</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="geocommit.signup-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="geocommit.signup-api.html#geocommit.signup/app-signup" id="var-tag">app-signup</a> </span><span id="var-link"><a href="geocommit.signup-api.html#geocommit.signup/app-verify-hook" id="var-tag">app-verify-hook</a> </span><br />
+  
+</div>
+</div>
+              </div>
+            </div>
+          </div>
+	</div>
+	<div id="foot">
+	  <div style="text-align: center;" id="copyright">Copyright 2010 The Geocommit Project, David Soria Parra</div>
+	</div>
+      </div>
+      <div id="DesignedBy">Logo &amp; site design by <a title="Visit Tom Hickey's website." href="http://www.tomhickey.com">Tom Hickey</a>.<br />
+      Clojure auto-documentation system by Tom Faulhaber.</div>
+    </div>
+    <!-- /AllContentContainer -->
+  </body>
+
+</html>
