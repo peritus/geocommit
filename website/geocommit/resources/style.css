@@ -65,7 +65,7 @@ td, th {
 }
 
 input {
-    margin: 5px;
+    margin: 0px;
     border: 1px solid #b0b0b0;
     padding: 3px;
     height: 20px;
@@ -90,7 +90,7 @@ input {
 }
 
 .middle p {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .left {

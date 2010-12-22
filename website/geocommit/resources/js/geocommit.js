@@ -1,4 +1,35 @@
-$(document).ready(function() {
+function geocommit_map(z) {
+    var c = new google.maps.LatLng(30, -10);
+    var m = new google.maps.Map(
+            document.getElementById("map_canvas"),
+            {zoom: z,
+             center: c,
+             mapTypeId: google.maps.MapTypeId.TERRAIN});
+    var marker = [];
+    $.ajax({url: "/api/geocommits",
+            type: "GET",
+            success: function(rows, stat, req) {
+                rows = jQuery.parseJSON(rows);
+                var marker = []
+                var info = []
+                for (i in rows) {
+                    var doc = rows[i].value;
+                    var pos = new google.maps.LatLng(doc.latitude, doc.longitude);
+
+                    var marker = new google.maps.Marker({
+                        map: m,
+                        title: doc.commit,
+                        position: pos});
+                    google.maps.event.addListener(marker, 'click', function () {
+                        new google.maps.InfoWindow({
+                            content: "<b>Author</b>: " + doc.author + "<br /><br />" + doc.message.replace("\n","<br />"),
+                            position: marker[i]}).open(m, this)});
+                    }
+            }
+    });
+}
+
+function geocommit_signup () {
     var resetted = false;
     var mdialog = $('<div></div>')
     .html('This dialog will show every time!')
@@ -50,4 +81,4 @@ $(document).ready(function() {
             resetted = true;
         }
     });
-});
+}
