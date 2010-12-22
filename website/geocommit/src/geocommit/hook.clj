@@ -120,13 +120,16 @@
 			  (.replaceFirst ident "github\\.com/" "")
 			  "/"
 			  (apply str rest))))))
-  
+
 (defn- github-notes-commit
   "Return refs/notes/geocommit for a repository by using the fetchservice"
   [repository-url]
-  (:refs/notes/geocommit (string-json (agent/http-agent (get-config :api :fetchservice)
-							:method "POST"
-							:body (json-str {:repository-url repository-url})))))
+  (handler-case :type
+    (:refs/notes/geocommit (string-json (agent/http-agent (get-config :api :fetchservice)
+							  :method "POST"
+							  :body (json-str {:repository-url repository-url}))))
+    (handle :parse-error
+      (raise :type :service-error))))
 
 (defn- github-fetch-note
   "Return the the geocommit note for a git SHA1.
@@ -177,8 +180,8 @@
 				       (-> payload :repository :absolute_url))
 				  payload))
 	(handle :parse-error
-	  (error (:message *condition*))
+	  (error (:message "parse error"))
 	  {:status 400})
 	(handle :service-error
-	  {:status 400})))
+	  {:status 500})))
     {:status 400}))
