@@ -160,9 +160,9 @@ class GeoGit(object):
 
         self.fetch_and_merge_notes(argv[0])
 
-    def cmd_push(self, argv):
+    def cmd_sync(self, argv):
         if len(argv) < 1:
-            usage("push")
+            usage("sync")
 
         self.fetch_and_merge_notes(argv[0])
 
