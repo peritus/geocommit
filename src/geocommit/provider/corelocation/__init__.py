@@ -45,18 +45,25 @@ if exists(EXECUTABLE):
                 lng = tokens[4].lstrip('+').rstrip('>')
                 # [5] '+/-',
                 # [6] '151.00m',
+                hacc = tokens[6].rstrip('m')
                 # [7] '(speed',
                 # [8] '-1.00',
+                speed = tokens[8]
                 # [9] 'mps',
                 # [10] '/',
                 # [11] 'course',
                 # [12] '-1.00)',
+                _dir = tokens[8]
                 # [13] '@',
                 # [14] '2010-12-19',
                 # [15] '01:24:41',
                 # [16] '+0100',
 
-            return Location(lat, lng, src='CoreLocation')
+            loc = Location(lat, lng, src='CoreLocation')
+            loc.hacc = hacc
+            loc.speed = speed
+            loc.dir = _dir
+            return loc
 
         def get_location(self):
             parseme = system(EXECUTABLE)
