@@ -12,7 +12,7 @@ Developing
 Building the GeoGitHub chrome extension
 ---------------------------------------
 
-$> ./bin/crxmake src/geogithub/ path/to/geogithub.pem
+$> ./bin/crxmake src/chrome-ext/ path/to/geogithub.pem
 
 Crazy ideas
 ===========

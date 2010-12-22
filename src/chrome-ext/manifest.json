@@ -1,0 +1,14 @@
+{
+  "update_url":"http://clients2.google.com/service/update2/crx",
+  "name": "Geocommit",
+  "version": "0.9.2",
+  "description": "This script visualizes geocommits on github and bitbucket",
+  "browser_action": {
+    "default_icon": "geogithub.png"
+  },
+  "content_scripts": [{
+    "run_at": "document_idle",
+    "js": [ "jquery.min.js", "geocommit-visualize.js" ],
+    "matches": [ "http://bitbucket.org/*", "https://bitbucket.org/*", "https://github.com/*", "http://www.github.com/*" ]
+  }]
+}
