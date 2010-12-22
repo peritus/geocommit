@@ -83,7 +83,7 @@ class GeoGit(object):
 
         if remote_changes:
 
-            system_exit_code("git stash save -m \"geocommit temporary stash\"")
+            system_exit_code("git stash save \"geocommit temporary stash\"")
 
             current_rev = system("git symbolic-ref -q HEAD").strip('\n\r ')
 
