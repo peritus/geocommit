@@ -183,7 +183,7 @@ class GeoGit(object):
             if len(parts) > 2:
                 extrainfo = parts[2]
 
-            old_note = system("git notes --ref geocommit show" + old_sha1).strip("\n\r ")
+            old_note = system("git notes --ref geocommit show " + old_sha1).strip("\n\r ")
             if old_note:
                 self.add_note(new_sha1, old_note + "\n\n") # silently fails if already exists
 
