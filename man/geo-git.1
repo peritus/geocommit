@@ -1,0 +1,67 @@
+.TH GIT-GEO 1 "December 22, 2010" "git-geo 1.0" "User Commands"
+.SH NAME
+git geo \- locate your source
+.SH SYNOPSIS
+.sp
+.nf
+\fIgit geo\fR setup
+\fIgit geo\fR note [<commit>]
+\fIgit geo\fR push <repository>
+\fIgit geo\fR pull <repository>
+.fi
+.SH DESCRIPTION
+.sp
+Attach location information to a commit. Setup a hook to automatically
+attach location information to commits. Push and pull geocommits to or from a remote
+repository\&.
+.sp
+\fIgit geo\fR requires access to WiFi\&.
+.SH SUBCOMMANDS
+.PP
+setup
+.RS 4
+Setup a git post-commit hook in the current git repository to automatically
+attach location information to your commits\&.
+.RE
+.PP
+note
+.RS 4
+Obtain your current location and store it in a git note\&.
+.RE
+.PP
+push <repository>
+.RS 4
+Push geocommits to a repository\&.
+.RE
+.PP
+pull <repository>
+.RS 4
+Pull geocommits from a repository and merge them\&.
+.RE
+.SH EXAMPLES
+.sp
+To setup an automatic geocommit hook type
+.sp
+.RS 4
+.B cd myproject.git && git geo setup
+.RE
+.SH DISCUSSION
+.sp
+\fIgeo git\fR stores geocommits as git notes (see \fIgit help notes\fR). It uses
+the "geocommit" namespace. \fIgit geo push\fR will only push, pull and
+merge geocommit notes.
+.sp
+Unlike git's push and pull command, \fIgit geo push\fR requires a repository
+argument and will not push to "origin" by default.
+.SH WEBSITE
+.sp
+For more information about geocommits and the geocommit format visit http://geocommit.com/
+.SH SEE ALSO
+git(1)
+.SH AUTHOR
+.sp
+Written by Filip Noetzel, Nils Adermann, David Soria Parra
+.SH NOTES
+.sp
+Requires git
+1.6.5 or newer\&.
