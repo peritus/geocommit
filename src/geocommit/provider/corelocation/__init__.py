@@ -21,12 +21,12 @@ if exists(EXECUTABLE):
             >>> line1 = "2010-12-19 01:25:49.101 geocommit[42427:903] <+53.46278416, +6.32637026> +/- 151.00m (speed -1.00 mps / course -1.00) @ 2010-12-19 01:24:41 +0100\\n"
             >>> line2 = "2010-12-19 01:25:50.244 geocommit[42427:903] <+53.46278817, +12.32638062> +/- 149.00m (speed 0.00 mps / course -1.00) @ 2010-12-19 01:25:49 +0100\\n"
             >>> CoreLocationProvider.parse_funky_description_dump(line1 + line2)
-            <Location(geocommit(1.0): lat 53.46278817, long 12.32638062, src CoreLocation;)>
+            <Location(geocommit(1.0): lat 53.46278817, long 12.32638062, speed 0.00, dir 0.00, hacc 149.00, src CoreLocation;)>
 
             This function will always parse the latter location
 
             >>> CoreLocationProvider.parse_funky_description_dump(line2 + line1)
-            <Location(geocommit(1.0): lat 53.46278416, long 6.32637026, src CoreLocation;)>
+            <Location(geocommit(1.0): lat 53.46278416, long 6.32637026, speed -1.00, dir -1.00, hacc 151.00, src CoreLocation;)>
             '''
 
             for line in string.split('\n'):
