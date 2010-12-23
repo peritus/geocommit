@@ -2,8 +2,8 @@
 					; (c) 2010 The Geocommit Project
 					; (c) 2010 David Soria Parra
 					; Licensed under the terms of the MIT License
-(ns #^{:doc "HTTP API"
-     :author "David Soria Parra"}
+(ns #^{:doc "HTTP API",
+       :author "David Soria Parra"}
   geocommit.api
   (:use geocommit.config
 	compojure.core
