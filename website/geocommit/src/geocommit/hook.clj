@@ -155,14 +155,19 @@
   (if rawpayload
     (let [payload (read-json rawpayload)]
       (handler-case :type
-	(condp = (guess-origin payload)
-	    :github (github (ident-from-url (-> payload :repository :url)) payload)
-	    :bitbucket (bitbucket (str "bitbucket.org"
-				       (-> payload :repository :absolute_url))
-				  payload))
+	(try
+	  (condp = (guess-origin payload)
+	      :github (github (ident-from-url (-> payload :repository :url)) payload)
+	      :bitbucket (bitbucket (str "bitbucket.org"
+					 (-> payload :repository :absolute_url))
+				    payload))
+	  (catch Exception e
+	    (raise :type :service-error
+		   :message (.getMessage e))))
 	(handle :parse-error
 	  (error (:message "parse error"))
 	  {:status 400})
 	(handle :service-error
+	  (print-stack-trace *condition*)
 	  {:status 500})))
     {:status 400}))
