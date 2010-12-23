@@ -59,7 +59,7 @@ if exists(EXECUTABLE):
                 # [15] '01:24:41',
                 # [16] '+0100',
 
-            loc = Location(lat, lng, src='CoreLocation')
+            loc = Location(lat, lng, src='cl')
             loc.hacc = hacc
             loc.speed = speed
             loc.dir = _dir
