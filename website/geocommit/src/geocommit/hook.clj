@@ -5,18 +5,15 @@
 (ns #^{:doc "HTTP signup API functions",
        :author "David Soria Parra"}
   geocommit.hook
-  (:gen-class :extends javax.servlet.http.HttpServlet)
   (:use geocommit.core
 	geocommit.config
+	geocommit.http
 	experimentalworks.couchdb
 	clojure.contrib.logging
 	clojure.contrib.json
-	clojure.contrib.condition
-	[ring.util.servlet :only [defservice]])
-  (:require [compojure.route :as route]
-	    [appengine-magic.core :as ae]
-	    [clojure.contrib.trace :as t]
-	    [clojure.contrib.http.agent :as agent])
+	clojure.contrib.condition)
+  (:require [appengine-magic.core :as ae]
+	    [clojure.contrib.trace :as t])
   (:import java.net.URI))
 
 (def *couchdb* (get-config :databases :geocommits))
@@ -27,37 +24,26 @@
   [ident]
   (map? (couch-get *couchdb* (str "repository:" ident))))
 
-(defn string-json
-  "Like clojure.contrib.http.agent/string but tries to parse the result as string.
-
-   Conditions:
-     :parse-error If the result cannot be parsed correctly"
-  [agent]
-  (let [str (agent/string agent)]
-    (try
-      (read-json str)
-      (catch Exception e
-	(raise :type :parse-error)))))
-
 (defn- send-scan
   "Send a scan to the fetch service"
   [ident repository]
-  (handler-case :type
-    (:job (string-json (agent/http-agent (t/trace (get-config :api :initscan))
-					 :body (json-str {:identifier ident
-							  :repository-url repository})
-					 :method "POST")))
-    (handle :parse-error
-      (raise :type :service-error))))
+  (http-call-service (get-config :api :initscan)
+		{:identifier ident
+		 :repository-url repository}))
 
 (defn- scan
   "Add a scan job to the database"
   [ident name desc repourl vcs]
   (and (couch-add *couchdb*
-		  (struct repository
-			  (str "repository:" ident)
-			  ident name desc repourl vcs false "repository"))
-       (send-scan ident repourl)))
+		 (struct repository
+			 (str "repository:" ident)
+			 ident name desc repourl vcs false "repository"))
+    (handler-case :type
+      (send-scan ident repourl)
+      (handle :service-error
+	(comment we intentionally ignore the service error and check with a
+		 cronjob for unscanned jobs)
+	true))))
   
 (defn- guess-origin
   "Heuristic to determine the origin of the hook request.
@@ -67,6 +53,8 @@
    (contains-all? payload :broker :service) :bitbucket
    (contains-all? payload :before :ref) :github))
 
+;; Bitbucket handler
+;;
 (defn- bitbucket-update-parser
   "Parse bitbucket.org commits"
   [ident commits]
@@ -87,7 +75,9 @@
 	      (-> payload :repository :absolute_url)
 	      "mercurial")
       {:status 200})))
-
+					;
+;; Github Handler
+;;
 (defn- ident-to-repository [ident]
   (str "git://" ident " .git"))
 
@@ -107,28 +97,26 @@
 
    It is necesary to normalize a github.com API URL."
   [ident sub & rest]
-  (str (.normalize (URI. (str
-			  (get-config :api :github)
-			  sub
-			  (.replaceFirst ident "github\\.com/" "")
-			  "/"
-			  (apply str rest))))))
+  (str
+   (.normalize (URI. (str
+		      (get-config :api :github)
+		      sub
+		      (.replaceFirst ident "github\\.com/" "")
+		      "/"
+		      (apply str rest))))))
 
 (defn- github-notes-commit
   "Return refs/notes/geocommit for a repository by using the fetchservice"
   [repository-url]
-  (handler-case :type
-    (:refs/notes/geocommit (string-json (agent/http-agent (get-config :api :fetchservice)
-							  :method "POST"
-							  :body (json-str {:repository-url repository-url}))))
-    (handle :parse-error
-      (raise :type :service-error))))
+  (:refs/notes/geocommit
+   (http-call-service (get-config :api :fetchservice)
+		      {:repository-url repository-url})))
 
 (defn- github-fetch-note
   "Return the the geocommit note for a git SHA1.
    We need the correct note-commit tree id."
   [ident note-commit id]
-  (-> (string-json (agent/http-agent (str (github-api-url ident "/blob/show/" note-commit "/" id))))
+  (-> (http-call-service (str (github-api-url ident "/blob/show/" note-commit "/" id)))
       :blob :data))
 
 (defn- parse-github-geocommit
