@@ -62,3 +62,10 @@
       (doto
 	  (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ssz") (.setTimeZone (TimeZone/getTimeZone "UTC")))
       date)))
+
+(defn contains-all?
+  "Like clojure.core/contains? but allows multiple keys.
+   (contains-all? map :foo :bar) is equal to (and (contains? map :foo) (contains? map :bar))"
+  [val & keys]
+  (every? #(= true %)
+	  (map #(contains? val %) keys)))

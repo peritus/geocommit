@@ -22,13 +22,6 @@
 (def *couchdb* (get-config :databases :geocommits))
 (defstruct repository :_id :identifier :name :description :repository-url :vcs :scanned :type)
 
-(defn- contains-all?
-  "Like clojure.core/contains? but allows multiple keys.
-   (contains-all? map :foo :bar) is equal to (and (contains? map :foo) (contains? map :bar))"
-  [val & keys]
-  (every? #(= true %)
-	  (map #(clojure.core/contains? val %) keys)))
-
 (defn is-tracked?
   "Check if the given repository identifier is already tracked"
   [ident]
