@@ -1,29 +1,55 @@
-This attaches geolocation information to git commits you you know where you
-where when you coded the stuff.
+Geocommit allows you to attach geolocation information to your commits for
+later analysis.
+
+Everything happens on your machine to protect your privacy, you you need to push the geo annotations explicitly if you want to share them with others.
+
+Installation
+============
+
+Use pip (or easy_install)::
+
+    pip install --upgrade geocommit
+
+(If you don't have pip yet, use ``easy_install pip`` to get it.)
+
+Usage
+=====
+
+Geo-enable a repository (installs a few hooks that enable keep track of your location for this repository)::
+
+    git geo setup
+
+Attach geo-information to HEAD::
+
+    git geo note
+
+Fetch geolocation information from remote::
+
+    git geo fetch
+
+Fetch and merge geolocation information::
+
+    git geo sync
 
 Developing
 ==========
 
-1.) python bootstrap.py
-2.) ./bin/buildout
-3.) ???
-4.) # happy hacking!
+::
 
-Building the GeoGitHub chrome extension
----------------------------------------
-
-$> ./bin/crxmake src/chrome-ext/ path/to/geogithub.pem
+    git clone https://github.com/peritus/geocommit.git
+    python bootstrap.py
+    ./bin/buildout
 
 Crazy ideas
 ===========
 
- * foursquare integration
- * 3rd party service with badges:
-   * jetsetter badge (commits at five different airports)
-   * mountain badge (commits at over 4000ft altitude)
- * geocommit + git-remote-couch + geocouch === awesome!
- * git geolog foo..bar > foobar.kml
- * Chrome/Safari extension to display google maps all over github
+* foursquare integration
+* 3rd party service with badges:
+  * jetsetter badge (commits at five different airports)
+  * mountain badge (commits at over 4000ft altitude)
+* geocommit + git-remote-couch + geocouch === awesome!
+* git geolog foo..bar > foobar.kml
+* Chrome/Safari extension to display google maps all over github
 
 Geocommit data format (v1.0)
 ============================
