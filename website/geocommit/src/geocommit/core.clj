@@ -19,9 +19,6 @@
 
 (defrecord Commit [_id identifier commit message author latitude longitude horizontal-accurancy source type])
 
-(defn- number [n]
-  (Float/valueOf n))
-
 (defn- parse-geocommit-short [message]
   "Parse a short geocommit format 1.0.
    Supports long, lat, acc, src."
@@ -55,8 +52,8 @@
       (Commit.
        (str "geocommit:" ident ":" hash)
        ident hash message
-       author (number lat) (number long)
-       (number hacc) src "geocommit"))))
+       author (Double. lat) (Double. long)
+       (Double. hacc) src "geocommit"))))
 
 (defn isodate
   "Return a proper ISO 8601 formated date string"
