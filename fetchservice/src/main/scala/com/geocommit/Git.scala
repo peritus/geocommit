@@ -41,22 +41,22 @@ class Git {
         Process("rm " + repoDir)
     }
 
-    def getGeocommitNotes(repo: String): Boolean = {
+    def getGeocommitNotes(repo: String): List[String] = {
         println("git notes --ref geocommit list " + getRepoDir(repo))
         Process("git notes --ref geocommit list", cwd = getRepoDir(repo)).
-            map(_ split "\\s+").foreach(
-            (data: Array[String]) => {
-                val noteObject = data.head
-                val commit = data.last
+            map(_ split "\\s+").map(
+                (data: Array[String]) => {
+                    val noteObject = data.head
+                    val commit = data.last
 
-                getObject(noteObject, getRepoDir(repo))
-            }
-        )
+                    getObject(noteObject, getRepoDir(repo))
+                }
+            ).toList
     }
 
     def getObject(obj: String, cwd: String): String = {
         val s = new StringBuilder
-        Process("git show " + obj, cwd = cwd) addString(s + "\n")
+        Process("git show " + obj, cwd = cwd).map(_ + "\n").addString(s)
         s toString
     }
 }
