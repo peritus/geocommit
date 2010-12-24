@@ -22,7 +22,7 @@
 
 (def *couchdb* (get-config :databases :invites))
 
-(defstruct invite :_id :date :mail :invitecode :active :verifycode :verified :type)
+(defrecord Invite [_id date mail invitecode active verifycode verified type])
 
 (defn- validate-email
   "Check if the given email address is valid"
@@ -54,9 +54,9 @@
     (if (and
 	 (validate-email mailaddr)
 	 (couch-add *couchdb*
-		    (struct invite
-			    (str "mail:" mailaddr)
-			    (isodate) mailaddr nil false code false "invite")))
+		    (Invite.
+		     (str "mail:" mailaddr)
+		     (isodate) mailaddr nil false code false "invite")))
       (do
 	(mail/send (mail/make-message
 		    :from "geocommit-team@j03.de"

@@ -17,7 +17,7 @@
   (:import java.net.URI))
 
 (def *couchdb* (get-config :databases :geocommits))
-(defstruct repository :_id :identifier :name :description :repository-url :vcs :scanned :type)
+(defrecord Repository [_id identifier name description repository-url vcs scanned type])
 
 (defn is-tracked?
   "Check if the given repository identifier is already tracked"
@@ -35,9 +35,9 @@
   "Add a scan job to the database"
   [ident name desc repourl vcs]
   (and (couch-add *couchdb*
-		 (struct repository
-			 (str "repository:" ident)
-			 ident name desc repourl vcs false "repository"))
+		 (Repository.
+		  (str "repository:" ident)
+		  ident name desc repourl vcs false "repository"))
     (handler-case :type
       (send-scan ident repourl)
       (handle :service-error
