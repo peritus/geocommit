@@ -10,50 +10,32 @@
 	    [clojure.contrib.trace :as t])
   (:import (java.text SimpleDateFormat)
 	   (java.util Date TimeZone)))
-(def *geocommit-short-regex*
-     #"geocommit(\(\d+\.\d+\)): (.+,\s)(long|lat|acc|src) ([\d\w\.]+);")
-(def *geocommit-long-regex*
-     #"geocommit (\(\d+\.\d+\))\n")
-(def *geocommit-subex*
-     #"(long|lat|hacc|src) ([\d\w\.]+),")
 
 (defrecord Commit [_id identifier commit message author latitude longitude horizontal-accurancy source type])
 
-(defn- parse-geocommit-short [message]
-  "Parse a short geocommit format 1.0.
-   Supports long, lat, acc, src."
-  (when-let [[_ version options k v]
-	     (re-find *geocommit-short-regex* message)]
-    (merge
-     (apply merge (map #(hash-map (get %1 1) (get %1 2))
-		       (re-seq *geocommit-subex* options)))
-     {k v})))
-
-(defn- parse-geocommit-long 
-  "Parse a long geocommit format 1.0
-   Supports long, lat, acc, src."
-  [message]
-  (when-let [found
-	     (second (s/split message #"geocommit (\(\d+\.\d+\))\n"))]
-    (apply merge (map #(hash-map (get %1 1) (get %1 2))
-		      (re-seq #"(long|lat|hacc|src): ([^\;\,]+?)\n"
-			      found)))))
+(defn- parse-geocommit-exp
+  ([s k]
+     (k {:long  (parse-geocommit-exp s #"(?s)geocommit \(1\.0\)\n(.*?)(?:\n\n|$)" #"\n" #":\s+")
+	 :short (parse-geocommit-exp s #"geocommit\(1\.0\):\s(.*?);" #",\s+" #"\s+")}))
+  ([s vers pairsep valsep]
+     (if-let [st (re-find vers s)]
+       (apply hash-map
+	      (mapcat #(s/split % valsep)
+		      (s/split (last st) pairsep))))))
 
 (defn parse-geocommit
   "Parses a geocommit information and returns a geocommit structure
    including ident, author, hash and message."
   [ident hash author message geocommit]
   (let [{lat "lat" long "long" hacc "hacc" src "src"}
-	(merge
-	 {"hacc" "0" "src" ""}
-	 (or (parse-geocommit-short geocommit)
-	     (parse-geocommit-long geocommit)))]
+	(merge {"hacc" "0" "src" ""}
+	       (or (parse-geocommit-exp geocommit :short)
+		   (parse-geocommit-exp geocommit :long)))]
     (if (not (or (nil? long) (nil? lat)))
-      (Commit.
-       (str "geocommit:" ident ":" hash)
-       ident hash message
-       author (Double. lat) (Double. long)
-       (Double. hacc) src "geocommit"))))
+      (Commit. (str "geocommit:" ident ":" hash)
+	       ident hash message
+	       author (Double. lat) (Double. long)
+	       (Double. hacc) src "geocommit"))))
 
 (defn isodate
   "Return a proper ISO 8601 formated date string"
