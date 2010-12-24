@@ -17,7 +17,7 @@
 (def *geocommit-subex*
      #"(long|lat|hacc|src) ([\d\w\.]+),")
 
-(defstruct commit :identifier :commit :message :author :latitude :longitude :horizontal-accurancy :source :type)
+(defstruct commit :_id :identifier :commit :message :author :latitude :longitude :horizontal-accurancy :source :type)
 
 (defn- number [n]
   (Float/valueOf n))
@@ -48,11 +48,11 @@
   [ident hash author message geocommit]
   (let [{lat "lat" long "long" hacc "hacc" src "src"}
 	(merge
+	 {"hacc" "0" "src" ""}
 	 (or (parse-geocommit-short geocommit)
-	     (parse-geocommit-long geocommit))
-	 {"hacc" "0" "src" ""})]
+	     (parse-geocommit-long geocommit)))]
     (if (not (or (nil? long) (nil? lat)))
-      (struct commit ident hash message author (number lat) (number long) (number hacc) src "geocommit"))))
+      (struct commit (str "geocommit:" ident ":" hash) ident hash message author (number lat) (number long) (number hacc) src "geocommit"))))
 
 (defn isodate
   "Return a proper ISO 8601 formated date string"
