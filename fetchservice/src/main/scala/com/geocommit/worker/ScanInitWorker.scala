@@ -40,7 +40,8 @@ object ScanInitWorker {
             val git = new Git
 
             git.clone(repo)
-            git.getGeocommitNotes(repo).foreach(parse geocommit data)
+            git.getGeocommitNotes(repo).map(Geocommit(_)).
+                foreach(x => println(compact(JsonAST.render(x.toJson))))
 
         //else id.stats with bitbuckt
         true
