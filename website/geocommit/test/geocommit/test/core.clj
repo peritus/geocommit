@@ -4,7 +4,7 @@
   (:use [clojure.test]))
 
 (deftest parse-geocommit-short
-  (testing "Parse geocommit long format"
+  (testing "Parse geocommit short format"
     (is (= (parse-geocommit "github.com/dsp/mled"
 			    "a532ba2af"
 			    "David Soria Parra"
@@ -44,4 +44,3 @@
   (is (= true (contains-all? {:a 3 :b 4} :a :b)))
   (is (= false (contains-all? {:a 3 :b 5} :a :c)))
   (is (= false (contains-all? {:a 5 :b 1} :a :b :c))))
-		
