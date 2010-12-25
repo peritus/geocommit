@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>geocommit.config API reference (geocommit)</title>
+    <title>geocommit.http API reference (geocommit)</title>
     <link href="static/favicon.png" rel="icon" />
     <link href="static/favicon.png" rel="shortcut icon" />
     <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
@@ -48,32 +48,49 @@ namespace.
   <div style="margin-left: 1em;" class="toc-section">
     <a href="#toc0">Overview</a>
     <div style="margin-left: 1em;" class="toc-entry">
-      <a href="#geocommit.config/get-config">get-config</a>
+      <a href="#geocommit.http/http-call-service">http-call-service</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#geocommit.http/http-req">http-req</a>
     </div>
     <br />
   </div>
 </div>
 </div>
-                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">geocommit.config</span></h1>
-by <span id="author">Unknown</span><br />
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">geocommit.http</span></h1>
+by <span id="author">David Soria Parra</span><br />
 <br />Usage:
 <pre>
 (ns your-namespace
-  (:require <span id="long-name">geocommit.config</span>))
+  (:require <span id="long-name">geocommit.http</span>))
 </pre><pre>
 </pre><h2>Overview</h2>
-<pre id="namespace-docstr"></pre>
+<pre id="namespace-docstr">geocommit HTTP connections. Appengine compatible.</pre>
 <br />
 <h2>Public Variables and Functions</h2>
 <div id="var-entry">
   <br />
   <hr />
-  <h2 id="geocommit.config/get-config">get-config</h2>
-  <span id="var-type">macro</span><br />
-  <pre id="var-usage">Usage: (get-config &amp; keys)
+  <h2 id="geocommit.http/http-call-service">http-call-service</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (http-call-service service)
+       (http-call-service service body)
 </pre>
-  <pre id="var-docstr">Get a nested config entry.
-(get-config :foo :bar) will return the {:foo {:bar X}} item.</pre>
+  <pre id="var-docstr">Call a http service using http-req.
+Uses json as exchange format.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.http/http-req">http-req</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (http-req url &amp; options)
+</pre>
+  <pre id="var-docstr">Starts a synchronous http request using HttpURLConnection.
+Possible keys are
+    :method "POST" or "GET"
+    :accept e.g. "application/json"
+    :content-type e.g. "application/json"
+    :body The body</pre>
   
 </div>
 

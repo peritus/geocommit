@@ -34,7 +34,7 @@ namespace.
     <a class="wiki_link" href="api-index.html">API Index</a><br />
     <a class="wiki_link" href="#">Namespaces:</a>
     <ul id="left-sidebar-list">
-      <li><a href="experimentalworks.couchdb-api.html" class="wiki_link">experimentalworks.couchdb</a></li><li><a href="geocommit.api-api.html" class="wiki_link">geocommit.api</a></li><li><a href="geocommit.app_servlet-api.html" class="wiki_link">geocommit.app_servlet</a></li><li><a href="geocommit.config-api.html" class="wiki_link">geocommit.config</a></li><li><a href="geocommit.core-api.html" class="wiki_link">geocommit.core</a></li><li><a href="geocommit.hook-api.html" class="wiki_link">geocommit.hook</a></li><li><a href="geocommit.signup-api.html" class="wiki_link">geocommit.signup</a></li>
+      <li><a href="experimentalworks.couchdb-api.html" class="wiki_link">experimentalworks.couchdb</a></li><li><a href="geocommit.api-api.html" class="wiki_link">geocommit.api</a></li><li><a href="geocommit.app_servlet-api.html" class="wiki_link">geocommit.app_servlet</a></li><li><a href="geocommit.config-api.html" class="wiki_link">geocommit.config</a></li><li><a href="geocommit.core-api.html" class="wiki_link">geocommit.core</a></li><li><a href="geocommit.hook-api.html" class="wiki_link">geocommit.hook</a></li><li><a href="geocommit.http-api.html" class="wiki_link">geocommit.http</a></li><li><a href="geocommit.signup-api.html" class="wiki_link">geocommit.signup</a></li>
     </ul>
   </div>
 </div>
@@ -48,6 +48,8 @@ namespace.
   <div style="margin-left: 1em;" class="toc-section">
     <a href="#toc0">Overview</a>
     <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#geocommit.core/contains-all?">contains-all?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#geocommit.core/isodate">isodate</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#geocommit.core/parse-geocommit">parse-geocommit</a>
@@ -68,6 +70,16 @@ by <span id="author">Unknown</span><br />
 <br />
 <h2>Public Variables and Functions</h2>
 <div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.core/contains-all?">contains-all?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (contains-all? val &amp; keys)
+</pre>
+  <pre id="var-docstr">Like clojure.core/contains? but allows multiple keys.
+(contains-all? map :foo :bar) is equal to (and (contains? map :foo) (contains? map :bar))</pre>
+  
+</div><div id="var-entry">
   <br />
   <hr />
   <h2 id="geocommit.core/isodate">isodate</h2>

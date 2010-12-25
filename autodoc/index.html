@@ -34,7 +34,7 @@ namespace.
     <a class="wiki_link" href="api-index.html">API Index</a><br />
     <a class="wiki_link" href="#">Namespaces:</a>
     <ul id="left-sidebar-list">
-      <li><a href="experimentalworks.couchdb-api.html" class="wiki_link">experimentalworks.couchdb</a></li><li><a href="geocommit.api-api.html" class="wiki_link">geocommit.api</a></li><li><a href="geocommit.app_servlet-api.html" class="wiki_link">geocommit.app_servlet</a></li><li><a href="geocommit.config-api.html" class="wiki_link">geocommit.config</a></li><li><a href="geocommit.core-api.html" class="wiki_link">geocommit.core</a></li><li><a href="geocommit.hook-api.html" class="wiki_link">geocommit.hook</a></li><li><a href="geocommit.signup-api.html" class="wiki_link">geocommit.signup</a></li>
+      <li><a href="experimentalworks.couchdb-api.html" class="wiki_link">experimentalworks.couchdb</a></li><li><a href="geocommit.api-api.html" class="wiki_link">geocommit.api</a></li><li><a href="geocommit.app_servlet-api.html" class="wiki_link">geocommit.app_servlet</a></li><li><a href="geocommit.config-api.html" class="wiki_link">geocommit.config</a></li><li><a href="geocommit.core-api.html" class="wiki_link">geocommit.core</a></li><li><a href="geocommit.hook-api.html" class="wiki_link">geocommit.hook</a></li><li><a href="geocommit.http-api.html" class="wiki_link">geocommit.http</a></li><li><a href="geocommit.signup-api.html" class="wiki_link">geocommit.signup</a></li>
     </ul>
   </div>
 </div>
@@ -67,6 +67,10 @@ namespace.
     <br />
   </div><div style="margin-left: 1em;" class="toc-section">
     <a href="#geocommit.hook">geocommit.hook</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#geocommit.http">geocommit.http</a>
     
     <br />
   </div><div style="margin-left: 1em;" class="toc-section">
@@ -135,18 +139,29 @@ services and dispatches the handler functions.</pre>
   <pre id="namespace-docstr"></pre>
   
   Public variables and functions:
-  <span id="var-link"><a href="geocommit.core-api.html#geocommit.core/isodate" id="var-tag">isodate</a> </span><span id="var-link"><a href="geocommit.core-api.html#geocommit.core/parse-geocommit" id="var-tag">parse-geocommit</a> </span><br />
+  <span id="var-link"><a href="geocommit.core-api.html#geocommit.core/contains-all?" id="var-tag">contains-all?</a> </span><span id="var-link"><a href="geocommit.core-api.html#geocommit.core/isodate" id="var-tag">isodate</a> </span><span id="var-link"><a href="geocommit.core-api.html#geocommit.core/parse-geocommit" id="var-tag">parse-geocommit</a> </span><br />
   
 </div><div id="namespace-entry">
   <br />
   <hr />
   <h2 id="geocommit.hook">geocommit.hook</h2>
-  by <span id="author">unknown author</span><br />
+  by <span id="author">David Soria Parra</span><br />
   <a href="geocommit.hook-api.html" id="api-link">Detailed API documentation</a><br />
-  <pre id="namespace-docstr"></pre>
+  <pre id="namespace-docstr">HTTP signup API functions</pre>
   
   Public variables and functions:
-  <span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/app-hook" id="var-tag">app-hook</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/github-update-parser" id="var-tag">github-update-parser</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/is-tracked?" id="var-tag">is-tracked?</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/string-json" id="var-tag">string-json</a> </span><br />
+  <span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/app-hook" id="var-tag">app-hook</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/github-update-parser" id="var-tag">github-update-parser</a> </span><span id="var-link"><a href="geocommit.hook-api.html#geocommit.hook/is-tracked?" id="var-tag">is-tracked?</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="geocommit.http">geocommit.http</h2>
+  by <span id="author">David Soria Parra</span><br />
+  <a href="geocommit.http-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">geocommit HTTP connections. Appengine compatible.</pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="geocommit.http-api.html#geocommit.http/http-call-service" id="var-tag">http-call-service</a> </span><span id="var-link"><a href="geocommit.http-api.html#geocommit.http/http-req" id="var-tag">http-req</a> </span><br />
   
 </div><div id="namespace-entry">
   <br />
