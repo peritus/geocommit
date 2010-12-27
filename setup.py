@@ -47,7 +47,7 @@ setup(
     version='0.9.0b2',
     description="Geolocation for git",
     long_description=open('README.rst').read(),
-    author="Nils Adermann <naderman+geocommit@naderman.de>, Filip Noetzel <filip+geocommit@j03.de>",
+    author="Nils Adermann <naderman+geocommit@naderman.de>, Filip Noetzel <filip+geocommit@j03.de>, David Soria Parra <dsp+geocommit@experimentalworks.net>",
     author_email="filip+geocommit@j03.de",
     license="Beerware",
     url="http://pypi.python.org/geocommit",
