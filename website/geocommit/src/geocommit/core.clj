@@ -11,7 +11,7 @@
   (:import (java.text SimpleDateFormat)
 	   (java.util Date TimeZone)))
 
-(defrecord Commit [_id identifier commit message author latitude longitude horizontal-accurancy source type])
+(defrecord Commit [_id repository revision message author latitude longitude horizontal-accuracy vertical-accuracy source altitude direction type])
 
 (defn- parse-geocommit-exp
   ([s k]
@@ -23,19 +23,26 @@
 	      (mapcat #(s/split % valsep)
 		      (s/split (last st) pairsep))))))
 
+(defn- tonumber [s]
+  (if s
+    (Double. s)))
+
 (defn parse-geocommit
   "Parses a geocommit information and returns a geocommit structure
    including ident, author, hash and message."
   [ident hash author message geocommit]
-  (let [{lat "lat" long "long" hacc "hacc" src "src"}
-	(merge {"hacc" "0" "src" ""}
-	       (or (parse-geocommit-exp geocommit :short)
-		   (parse-geocommit-exp geocommit :long)))]
+  (let [{:keys [lat long hacc vacc src dir alt speed]}
+	(keywordize-keys
+	 (merge {"hacc" nil "vacc" nil "src" nil "dir" nil "speed" nil "alt" nil}
+		(or (parse-geocommit-exp geocommit :short)
+		    (parse-geocommit-exp geocommit :long))))]
     (if (not (or (nil? long) (nil? lat)))
       (Commit. (str "geocommit:" ident ":" hash)
 	       ident hash message
-	       author (Double. lat) (Double. long)
-	       (Double. hacc) src "geocommit"))))
+	       author (tonumber lat) (tonumber long)
+	       (tonumber hacc) (tonumber vacc)
+	       src (tonumber alt) dir
+	       "geocommit"))))
 
 (defn isodate
   "Return a proper ISO 8601 formated date string"
