@@ -11,6 +11,8 @@ from geocommit.locationprovider import LocationProvider
 
 from geocommit.util import system, system_exit_code, forward_system
 
+version = "0.9.0b2"
+
 class GeoGit(object):
 
     def __init__(self):
@@ -172,6 +174,9 @@ class GeoGit(object):
 
         print "Pushing geocommit notes"
         forward_system("git push " + argv[0] + " refs/notes/geocommit")
+
+    def cmd_version(self, argv):
+        print "version: " + version
 
     def cmd_postrewrite(self, argv):
         if len(argv) < 1:
