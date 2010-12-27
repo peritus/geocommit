@@ -197,8 +197,9 @@ class GeoGit(object):
                 self.add_note(new_sha1, old_note + "\n\n") # silently fails if already exists
 
 
-def usage(cmd):
-    print >> sys.stderr, "Usage: git geo " + cmd
+def usage(cmd = None):
+    print >> sys.stderr, "Usage: git geo <command>"
+    print >> sys.stderr, ""
     sys.exit(1)
 
 def git_geo():
@@ -217,6 +218,6 @@ def git_geo():
             f(sys.argv[2:])
             sys.exit(0)
 
-    usage(None)
+    usage()
     sys.exit(1)
 
