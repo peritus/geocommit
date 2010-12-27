@@ -58,5 +58,6 @@ setup(
       'git-geo= geocommit:git_geo',
      ]},
     extras_require = {'test': ['zope.testing']},
+    data_files=[('share/man/man1/', ['man/git-geo.1'])],
     **extra_args
     )
