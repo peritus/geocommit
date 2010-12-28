@@ -3,6 +3,7 @@
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [compojure "0.5.3"]
+		 [clj-http "0.1.2-ae"]
 		 [commons-validator/commons-validator "1.3.1"]
 		 [oro/oro "2.0.8"]
 		 [ring/ring "0.3.5"]]
