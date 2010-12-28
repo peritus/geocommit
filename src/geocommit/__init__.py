@@ -155,19 +155,25 @@ class GeoGit(object):
             usage("setup")
 
     def cmd_fetch(self, argv):
-        if len(argv) < 1:
+        if len(argv) == 0:
+            argv = ['origin']
+        elif len(argv) >= 2:
             usage("fetch")
 
         self.fetch_notes(argv[0])
 
     def cmd_pull(self, argv):
-        if len(argv) < 1:
+        if len(argv) == 0:
+            argv = ['origin']
+        elif len(argv) >= 2:
             usage("pull")
 
         self.fetch_and_merge_notes(argv[0])
 
     def cmd_sync(self, argv):
-        if len(argv) < 1:
+        if len(argv) == 0:
+            argv = ['origin']
+        elif len(argv) >= 2:
             usage("sync")
 
         self.fetch_and_merge_notes(argv[0])
