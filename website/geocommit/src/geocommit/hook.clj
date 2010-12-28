@@ -162,5 +162,6 @@
 	  (error (:message "parse error"))
 	  {:status 400})
 	(handle :service-error
-	  (print-stack-trace *condition*)
-	  {:status 500}))))
+	  (with-logs
+	    (print-stack-trace *condition*)
+	    {:status 500})))))
