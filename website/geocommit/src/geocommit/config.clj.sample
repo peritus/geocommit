@@ -1,11 +1,34 @@
-(ns geocommit.config)
+(ns #^{:doc "HTTP API configuration functions",
+       :author "David Soria Parra"}
+  geocommit.config
+  (:use clojure.contrib.logging)
+  (:require [appengine-magic.core :as ae]
+	    [clojure.contrib.trace :as t]))
 
-(def *config* {:databases
-	       {:invites "http://example.com/geocommit-web"
-		:geocommits "http://example.com/geocommit"}
-	       :api
-	       {:fetchservice "http://fetchservice.example.com"
-		:github "http://github.com/api/v2/json"}})
+(def *config*
+     {:production
+      {:databases
+       {:invites "http://production.couchone.com/geocommit-web"
+	:geocommits "http://production.couchone.com/geocommit"}
+       :api
+       {:fetchservice "http://localhost/test.json"
+	:initscan "http://localhost/scan.php"
+	:github "http://github.com/api/v2/json"}}
+      :testing
+      {:databases
+       {:invites "http://localhost:5984/geocommit-web"
+	:geocommits "http://localhost:5984/geocommit"}
+       :api
+       {:fetchservice "http://localhorst/test.json"
+	:initscan "http://localhost/scan.php"
+	:github "http://github.com/api/v2/json"}}})
 
-(defmacro get-config [& keys]
-     `(-> ~*config* ~@keys))
+(defn get-config
+  "Get a nested config entry.
+   (get-config :foo :bar) will return the {:foo {:bar X}} item."
+  [& keys]
+  (get-in (*config*
+	   (condp = (ae/appengine-environment-type)
+	       :production :production
+	       :testing))
+	 keys))
