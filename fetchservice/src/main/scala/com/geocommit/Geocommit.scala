@@ -1,13 +1,10 @@
-package com.geocommit.worker;
-
-import com.geocommit.Git;
+package com.geocommit
 
 import com.surftools.BeanstalkClientImpl.ClientImpl
 import scala.collection.immutable.HashMap
-import net.liftweb.json.JsonParser
-import net.liftweb.json.JsonAST
-import net.liftweb.json.JsonAST.{JValue, JObject, JField, JNull, JString}
-import net.liftweb.json.JsonDSL._
+
+import sjson.json._
+import scala.reflect._
 
 
 abstract class GeocommitFormat {
@@ -52,52 +49,42 @@ object GeocommitLongFormat extends GeocommitFormat {
     override def getKeyValueSeparator(): String = ":\\s*"
 }
 
+@BeanInfo
+case class Geocommit(
+    val repository: String,
+    val revision: String,
+    val message: String,
+    val author: String,
+    val latitude: Double,
+    val longitude: Double,
+    val source: String,
 
-class Geocommit(
-    lat: Double,
-    long: Double,
-    src: String,
-    alt: Option[Double],
-    speed: Option[Double],
-    dir: Option[Double],
-    hacc: Option[Double],
-    vacc: Option[Double]
-) {
-    def toJson(): JObject = {
-        val obj =
-            ("lat" -> lat) ~
-            ("long" -> long) ~
-            ("src" -> src)
+    @OptionTypeHint(classOf[Double])
+    val altitude: Option[Double],
 
-        obj ~ List(
-            ("alt", alt),
-            ("speed", speed),
-            ("dir", dir),
-            ("hacc", hacc),
-            ("vacc", vacc)
-        ).filter{
-            case (_, Some(_)) => true
-            case (_, None) => false
-        }
-        .map{
-            case (key, value) => JField(key, value)
-        }
-    }
-}
+    @OptionTypeHint(classOf[Double])
+    val speed: Option[Double],
+
+    @OptionTypeHint(classOf[Double])
+    val direction: Option[Double],
+
+    @JSONProperty("horizontal-accuracy")
+    @OptionTypeHint(classOf[Double])
+    val horizontalAccuracy: Option[Double],
+
+    @JSONProperty("vertical-accuracy")
+    @OptionTypeHint(classOf[Double])
+    val verticalAccuracy: Option[Double]
+)
 
 object Geocommit {
     def apply(
-        lat: Double,
-        long: Double,
-        src: String,
-        alt: Option[Double],
-        speed: Option[Double],
-        dir: Option[Double],
-        hacc: Option[Double],
-        vacc: Option[Double]
-    ) = new Geocommit(lat, long, src, alt, speed, dir, hacc, vacc)
-
-    def apply(data: String) = {
+        repository: String,
+        revision: String,
+        message: String,
+        author: String,
+        data: String
+    ) = {
         val values = List(
                 GeocommitLongFormat, GeocommitShortFormat
             ).filter(
@@ -105,10 +92,14 @@ object Geocommit {
             ).head.getMap(data)
 
         new Geocommit(
+            repository,
+            revision,
+            message,
+            author,
             values("lat").toDouble,
             values("long").toDouble,
             values("src"),
-            values.get("alt").map(_.toDouble),
+            values.get("alt").map(_.toDouble), // None -> None, Option[String] -> Some(Double(s))
             values.get("speed").map(_.toDouble),
             values.get("dir").map(_.toDouble),
             values.get("hacc").map(_.toDouble),

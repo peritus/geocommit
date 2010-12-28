@@ -1,6 +1,7 @@
 package com.geocommit.worker;
 
 import com.geocommit.Git;
+import com.geocommit.GeocommitDb;
 
 import com.surftools.BeanstalkClientImpl.ClientImpl
 import scala.collection.immutable.HashMap
@@ -9,9 +10,9 @@ import net.liftweb.json.JsonAST
 import net.liftweb.json.JsonAST.{JValue, JObject, JField, JNull, JString}
 import net.liftweb.json.JsonDSL._
 
-
 object ScanInitWorker {
     val beanstalk = new ClientImpl("localhost", 11300)
+    val couchdb = new GeocommitDb("127.0.0.1")
 
     implicit def byteArray2String(b: Array[Byte]): String =
         new String(b, "UTF-8")
@@ -40,8 +41,12 @@ object ScanInitWorker {
             val git = new Git
 
             git.clone(repo)
-            git.getGeocommitNotes(repo).map(Geocommit(_)).
-                foreach(x => println(compact(JsonAST.render(x.toJson))))
+            git.getGeocommits(repo, id).foreach(
+                x => couchdb.insertCommit(x)
+            )
+
+            couchdb.repoSetScanned(id)
+                //foreach(x => println(compact(JsonAST.render(x.toJson))))
 
         //else id.stats with bitbuckt
         true
