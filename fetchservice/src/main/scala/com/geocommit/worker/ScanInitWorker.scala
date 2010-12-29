@@ -1,6 +1,8 @@
 package com.geocommit.worker;
 
-import com.geocommit.Git;
+import com.geocommit.source.GeocommitSource;
+import com.geocommit.source.Git;
+import com.geocommit.source.Bitbucket;
 import com.geocommit.GeocommitDb;
 
 import com.surftools.BeanstalkClientImpl.ClientImpl
@@ -36,20 +38,26 @@ object ScanInitWorker {
     }
 
     def scanInit(repo: String, id: String): Boolean = {
-
-        //if id.starts with github
-            val git = new Git
-
-            git.clone(repo)
-            git.getGeocommits(repo, id).foreach(
-                x => couchdb.insertCommit(x)
-            )
-
-            couchdb.repoSetScanned(id)
-                //foreach(x => println(compact(JsonAST.render(x.toJson))))
-
-        //else id.stats with bitbuckt
-        true
+        (if (id.startsWith("github")) {
+            Some(new Git)
+        }
+        else if (id.startsWith("bitbucket")) {
+            Some(new Bitbucket)
+        }
+        else {
+            None
+        }) match {
+            case Some(source) =>
+                source.clone(repo)
+                source.getGeocommits(repo, id).foreach(
+                    x => couchdb.insertCommit(x)
+                )
+                //source.delete(repo)
+                couchdb.repoSetScanned(id)
+                true
+            case _ =>
+                false
+        }
     }
 
     def process(json: JObject): Boolean = {

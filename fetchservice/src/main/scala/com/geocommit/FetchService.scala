@@ -1,5 +1,7 @@
 package com.geocommit;
 
+import com.geocommit.source.Git;
+
 import javax.servlet.http.{
     HttpServlet,
     HttpServletRequest,
@@ -10,7 +12,7 @@ import com.surftools.BeanstalkClientImpl.ClientImpl
 import scala.collection.immutable.HashMap
 import net.liftweb.json.JsonParser
 import net.liftweb.json.JsonAST
-import net.liftweb.json.JsonAST.{JValue, JObject, JNothing}
+import net.liftweb.json.JsonAST.{JValue, JObject, JNothing, JString, JField, JNull}
 import net.liftweb.json.JsonDSL._
 
 
@@ -57,6 +59,20 @@ class FetchService extends HttpServlet {
         result
     }
 
+    def lsremote(
+        request: JObject, response: HttpServletResponse
+    ): JValue = {
+        (request \ "repository-url") match {
+            case JField(_, JString(repo)) =>
+                val git = new Git
+                JObject(List(JField(
+                    "refs/notes/geocommit",
+                    JString(git.lsremote(repo, "refs/notes/geocommit"))
+                )))
+            case _ =>
+                JNull
+        }
+    }
 
     override def doPost(
         request: HttpServletRequest, response: HttpServletResponse
@@ -67,9 +83,11 @@ class FetchService extends HttpServlet {
                     request.getPathInfo match {
                         case "/scan/init" =>
                             enqueueScanInit(json, response)
+                        case "/lsremote" =>
+                            lsremote(json, response)
                         case _ =>
                             response.setStatus(HttpServletResponse.SC_NOT_FOUND)
-                            JNothing
+                            JNull
                     }
                 )))
             case _ =>
