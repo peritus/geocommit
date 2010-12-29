@@ -14,7 +14,7 @@
 	clojure.contrib.condition)
   (:require [appengine-magic.core :as ae]
 	    [clojure.contrib.trace :as t])
-  (:import java.net.URI))
+  (:import (java.net URI URISyntaxException URL MalformedURLException)))
 
 (def *couchdb* (get-config :databases :geocommits))
 (defrecord Repository [_id identifier name description repository-url vcs scanned type])
@@ -121,6 +121,15 @@
       (if (empty? ctx)
 	nil ctx))))
 
+(defn- sanitize-url
+  [url]
+  (try
+    (str (.normalize (URI. (str (URL. url)))))
+    (catch MalformedURLException mue
+      (raise :type :uri-error))
+    (catch URISyntaxException use
+      (raise :type :uri-error))))
+
 (defn- handle-service
   [ident payload repository-url vcs parser]
   (if (is-tracked? ident)
@@ -137,10 +146,12 @@
       {:status 200})))
 
 (defn- github [ident payload]
-  (handle-service ident payload (str "git://" ident ".git") "git" github-update-parser))
+  (let [url (sanitize-url (str "git://" ident ".git"))]
+    (handle-service ident payload url "git" github-update-parser)))
 
 (defn- bitbucket [ident payload]
-  (handle-service ident payload ident "mercurial" bitbucket-update-parser))
+  (let [url  (sanitize-url (str "http://" ident))]
+    (handle-service ident payload url "mercurial" bitbucket-update-parser)))
 
 (defn app-hook
   "API entry point for the github/bitbucket geocommit receive service."
@@ -160,6 +171,8 @@
 		 :message (.getMessage e))))
 	(handle :parse-error
 	  (error (:message "parse error"))
+	  {:status 400})
+	(handle :uri-error
 	  {:status 400})
 	(handle :service-error
 	  (with-logs
