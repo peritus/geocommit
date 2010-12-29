@@ -17,8 +17,10 @@ class FetchServiceProject(info: ProjectInfo) extends ParentProject(info) {
     class WebServiceProject(info: ProjectInfo) extends DefaultWebProject(info) {
     }
 
-    class ScanInitWorkerProject(info: ProjectInfo) extends DefaultProject(info) {
-        override def mainClass = Some("ScanInitWorker")
+    class ScanInitWorkerProject(info: ProjectInfo) extends DefaultProject(info) with ProguardProject{
+        override def proguardOptions = List(
+            proguardKeepMain("com.geocommit.worker.ScanInitWorker"))
+
     }
 
 }
