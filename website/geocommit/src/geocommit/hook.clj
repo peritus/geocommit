@@ -36,7 +36,7 @@
 (defn- send-scan
   "Send a scan to the fetch service"
   [ident repository]
-  (http-call-service (get-config :api :initscan)
+  (http-call-service (t/trace (get-config :api :initscan))
 		     {:identifier ident
 		      :repository-url repository}))
 
@@ -174,8 +174,12 @@
 	  (error (:message "parse error"))
 	  {:status 400})
 	(handle :uri-error
-	  {:status 400})
+	  (with-logs
+	    (println (:message *condition*))
+	    (print-stack-trace *condition*)
+	    {:status 400}))
 	(handle :service-error
 	  (with-logs
+	    (println (:message *condition*))
 	    (print-stack-trace *condition*)
 	    {:status 500})))))
