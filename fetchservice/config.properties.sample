@@ -1,0 +1,4 @@
+#couchhost=localhost
+#couchport=5984
+#couchuser=xyz
+#couchpass=def
