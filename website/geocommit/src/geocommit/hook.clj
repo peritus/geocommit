@@ -24,6 +24,15 @@
   [ident]
   (map? (couch-get *couchdb* (str "repository:" ident))))
 
+(defn- sanitize-url
+  [url]
+  (try
+    (str (.normalize (URI. (str (URL. url)))))
+    (catch MalformedURLException mue
+      (raise :type :uri-error))
+    (catch URISyntaxException use
+      (raise :type :uri-error))))
+
 (defn- send-scan
   "Send a scan to the fetch service"
   [ident repository]
@@ -74,7 +83,7 @@
      http://github.com/dsp/geocommit -> github.com/dsp/gecommit"
   [url]
   (if url
-    (.replaceFirst url "(http://|https://)" "")
+    (.replaceFirst (sanitize-url url) "(http://|https://)" "")
     (raise :type :parse-error)))
 
 (defn- github-api-url
@@ -121,15 +130,6 @@
       (if (empty? ctx)
 	nil ctx))))
 
-(defn- sanitize-url
-  [url]
-  (try
-    (str (.normalize (URI. (str (URL. url)))))
-    (catch MalformedURLException mue
-      (raise :type :uri-error))
-    (catch URISyntaxException use
-      (raise :type :uri-error))))
-
 (defn- handle-service
   [ident payload repository-url vcs parser]
   (if (is-tracked? ident)
@@ -146,7 +146,8 @@
       {:status 200})))
 
 (defn- github [ident payload]
-  (let [url (sanitize-url (str "git://" ident ".git"))]
+  (let [url (str "git://" ident ".git")]
+    (info url)
     (handle-service ident payload url "git" github-update-parser)))
 
 (defn- bitbucket [ident payload]
