@@ -1,6 +1,7 @@
-					; geocommit.com HTTP API entry point
-					; (c) 2010 The Geocommit Project
-					; (c) 2010 David Soria Parra
+					; geocommit.com HTTP main entry point
+					; (c) 2010 David Soria Parra <dsp+geocommit@experimentalworks.net>
+					;          Nils Adermann <naderman+geocommit@naderman.de>
+					;          Filip Noetzel <filip+geocommit@j03.de>
 					; Licensed under the terms of the MIT License
 (ns #^{:doc "HTTP API entry point. This provides the main entry point for all routes to the
  services and dispatches the handler functions.",

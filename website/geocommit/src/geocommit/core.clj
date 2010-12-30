@@ -1,6 +1,7 @@
-					; geocommit.com HTTP API core
-					; (c) 2010 The Geocommit Project
-					; (c) 2010 David Soria Parra
+					; geocommit.com HTTP core
+					; (c) 2010 David Soria Parra <dsp+geocommit@experimentalworks.net>
+					;          Nils Adermann <naderman+geocommit@naderman.de>
+					;          Filip Noetzel <filip+geocommit@j03.de>
 					; Licensed under the terms of the MIT License
 (ns #^{:doc "HTTP API core functions",
        :author "David Soria Parra"}

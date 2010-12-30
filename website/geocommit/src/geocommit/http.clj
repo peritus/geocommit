@@ -1,3 +1,8 @@
+					; geocommit.com HTTP request API
+					; (c) 2010 David Soria Parra <dsp+geocommit@experimentalworks.net>
+					;          Nils Adermann <naderman+geocommit@naderman.de>
+					;          Filip Noetzel <filip+geocommit@j03.de>
+					; Licensed under the terms of the MIT License
 (ns #^{:doc "geocommit HTTP connections. Appengine compatible.",
        :author "David Soria Parra"}
   geocommit.http
