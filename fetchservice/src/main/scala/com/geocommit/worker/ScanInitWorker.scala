@@ -1,9 +1,9 @@
 package com.geocommit.worker;
 
-import com.geocommit.source.GeocommitSource;
-import com.geocommit.source.Git;
-import com.geocommit.source.Bitbucket;
-import com.geocommit.GeocommitDb;
+import com.geocommit.source.GeocommitSource
+import com.geocommit.source.Git
+import com.geocommit.source.Bitbucket
+import com.geocommit.GeocommitDb
 
 import com.surftools.BeanstalkClientImpl.ClientImpl
 import scala.collection.immutable.HashMap
@@ -11,10 +11,23 @@ import net.liftweb.json.JsonParser
 import net.liftweb.json.JsonAST
 import net.liftweb.json.JsonAST.{JValue, JObject, JField, JNull, JString}
 import net.liftweb.json.JsonDSL._
+import java.util.Properties
+import java.io.FileInputStream
 
 object ScanInitWorker {
     val beanstalk = new ClientImpl("localhost", 11300)
-    val couchdb = new GeocommitDb("127.0.0.1")
+
+    val properties = new Properties
+    properties.load(new FileInputStream("config.properties"))
+
+    val user = properties.getProperty("couchuser")
+    val password = properties.getProperty("couchpass")
+
+    val couchdb = new GeocommitDb(
+        properties.getProperty("couchhost", "localhost"),
+        properties.getProperty("couchport", "5894").toInt,
+        if (user == null) None else Some((user, password))
+    )
 
     implicit def byteArray2String(b: Array[Byte]): String =
         new String(b, "UTF-8")

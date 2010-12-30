@@ -5,6 +5,7 @@ import scala.collection.immutable.HashMap
 
 import sjson.json._
 import scala.reflect._
+import scala.annotation.target._
 
 
 abstract class GeocommitFormat {
@@ -68,13 +69,16 @@ case class Geocommit(
     @OptionTypeHint(classOf[Double])
     val direction: Option[Double],
 
-    @JSONProperty("horizontal-accuracy")
+    @(JSONProperty @getter)(value = "horizontal-accuracy")
     @OptionTypeHint(classOf[Double])
     val horizontalAccuracy: Option[Double],
 
-    @JSONProperty("vertical-accuracy")
+    @(JSONProperty @getter)(value = "vertical-accuracy")
     @OptionTypeHint(classOf[Double])
-    val verticalAccuracy: Option[Double]
+    val verticalAccuracy: Option[Double],
+
+    @(JSONProperty @getter)(value = "type")
+    val docType: String = "geocommit"
 )
 
 object Geocommit {

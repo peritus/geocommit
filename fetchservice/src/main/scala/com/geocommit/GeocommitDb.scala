@@ -24,14 +24,22 @@ case class Repository(
    private def this() = this(null, null, null, null, null, false, null)
 }
 
-class GeocommitDb(val host: String) {
+class GeocommitDb(val host: String, val port: Int, val auth: Option[(String, String)]) {
     val http = new Http
-    val db = Db(Couch(host), "geocommit")
+    auth match {
+        case None =>
+            println("No auth")
+        case Some((u, p)) =>
+            println("User: " + u)
+            println("Password: " + p)
+    }
+    val db = Db(Couch(host, port, auth), "geocommit")
 
     def insertCommit(commit: Geocommit) {
         val id = "geocommit:" + commit.repository + ":" + commit.revision
         val doc = Doc(db, id)
 
+        println("Adding geocommit")
         try {
             http(doc add commit)
         }
@@ -42,11 +50,13 @@ class GeocommitDb(val host: String) {
                 else
                     throw e
         }
+        println("Done adding geocommit")
     }
 
     def repoSetScanned(repo: String) {
         val id = "repository:" + repo
 
+        println("update repository in couchdb")
         http(db.get[Repository](id)) match {
             case (id: String, rev: String, repo: Repository) =>
                 repo.scanned = true

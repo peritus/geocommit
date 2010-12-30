@@ -18,6 +18,7 @@ import net.liftweb.json.JsonDSL._
 
 class FetchService extends HttpServlet {
     val beanstalk = new ClientImpl("localhost", 11300)
+    val jdklog = java.util.logging.Logger.getLogger("dispatch")
 
     implicit def string2ByteArray(s: String): Array[Byte] =
         s.getBytes("UTF-8")
@@ -77,7 +78,9 @@ class FetchService extends HttpServlet {
     override def doPost(
         request: HttpServletRequest, response: HttpServletResponse
     ) {
-        JsonParser parse getRequestBody(request) match {
+        val content = getRequestBody(request)
+        jdklog.info(request.getMethod + " " + content)
+        JsonParser parse content match {
             case json: JObject =>
                 response.getWriter.println(compact(JsonAST.render(
                     request.getPathInfo match {
