@@ -5,15 +5,14 @@ function geocommit_map(z) {
             {zoom: z,
              center: c,
              mapTypeId: google.maps.MapTypeId.SATELLITE});
-    var marker = [];
     $.ajax({url: "/api/geocommits",
             type: "GET",
             success: function(rows, stat, req) {
                 rows = jQuery.parseJSON(rows);
                 var marker = []
                 var info = []
-                for (i in rows) {
-                    var doc = rows[i].value;
+                $.each(rows, function() {
+                    var doc = this.value;
                     var pos = new google.maps.LatLng(doc.latitude, doc.longitude);
 
                     var marker = new google.maps.Marker({
@@ -22,9 +21,11 @@ function geocommit_map(z) {
                         position: pos});
                     google.maps.event.addListener(marker, 'click', function () {
                         new google.maps.InfoWindow({
-                            content: "<b>Author</b>: " + doc.author + "<br /><br />" + doc.message.replace("\n","<br />"),
-                            position: marker[i]}).open(m, this)});
-                    }
+                            content: "<b>Author</b>: " + doc.author
+                            + "<br /><br />"
+                            + doc.message.replace("\n","<br />")
+                            + "<br /><a href=\"http://" + doc.repository + "\">http://" + doc.repository + "</a>"}).open(m, this)});
+                });
             }
     });
 }
