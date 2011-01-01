@@ -14,7 +14,8 @@
 	clojure.contrib.json
 	clojure.contrib.condition)
   (:require [appengine-magic.core :as ae]
-	    [clojure.contrib.trace :as t])
+	    [clojure.contrib.trace :as t]
+	    [clojure.contrib.str-utils2 :as s])
   (:import (java.net URI URISyntaxException URL MalformedURLException)))
 
 (def *couchdb* (get-config :databases :geocommits))
@@ -112,7 +113,7 @@
   "Return the the geocommit note for a git SHA1.
    We need the correct note-commit tree id."
   [ident note-commit id]
-  (-> (http-call-service (str (github-api-url ident "/blob/show/" note-commit "/" id)))
+  (-> (t/trace (http-call-service (t/trace (str (github-api-url ident "/blob/show/" note-commit "/" (s/take id 2) "/" (s/drop id 2))))))
       :blob :data))
 
 (defn- parse-github-geocommit
