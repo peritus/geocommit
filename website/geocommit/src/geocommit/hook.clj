@@ -75,7 +75,7 @@
 ;; Github Handler
 ;;
 (defn- ident-to-repository [ident]
-  (str "git://" ident " .git"))
+  (str "git://"ident".git"))
 
 (defn- ident-from-url
   "Takes a URL like http://github.com/foo and returns a repository identifier.
@@ -147,7 +147,7 @@
       {:status 200})))
 
 (defn- github [ident payload]
-  (let [url (str "git://" ident ".git")]
+  (let [url (str "git://"ident".git")]
     (info url)
     (handle-service ident payload url "git" github-update-parser)))
 
