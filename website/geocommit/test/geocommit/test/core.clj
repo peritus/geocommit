@@ -17,8 +17,9 @@
 		    "David Soria Parra",
 		    2.23,
 		    3.14,
-		    0.0,
+		    nil, nil,
 		    "nmg",
+		    nil, nil,
 		    "geocommit")))))
 
 (deftest parse-geocommit-long
@@ -35,8 +36,9 @@
 		    "David Soria Parra",
 		    2.23,
 		    3.14,
-		    0.0,
+		    nil, nil,
 		    "nmg",
+		    nil, nil
 		    "geocommit")))))
 
 (deftest contains-all
