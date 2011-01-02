@@ -181,7 +181,11 @@ input {
     width: 423px;
 }
 
-#footer .column em {
+#footer .column em,
+#footer a:link,
+#footer a:visited,
+#footer a:active,
+#footer a:hover {
     color: #e97600;
     font-style: normal;
 }
