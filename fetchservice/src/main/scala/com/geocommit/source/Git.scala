@@ -55,10 +55,13 @@ class Git extends GeocommitSource {
                         getObject(noteObject, getRepoDir(repo))
                     )
                 }
-            ).map{
-                case (rev: String, (message: String, author: String), note: String) => {
+            ).filter{
+                case (rev: String, (message: String, author: String), note: String) =>
+                    !message.isEmpty || !author.isEmpty
+                case _ => false
+            }.map{
+                case (rev: String, (message: String, author: String), note: String) =>
                     Geocommit(id, rev, message, author, note)
-                }
             }.toList
     }
 
@@ -71,12 +74,12 @@ class Git extends GeocommitSource {
 
     def getCommit(rev: String, cwd: String): (String, String) = {
         val subject = new StringBuilder
-        println("git log -1 --pretty=\"format:%s\" " + rev)
-        Process("git log -1 --pretty=\"format:%s\" " + rev, cwd=cwd).map(_ + "\n").addString(subject)
+        println("git log -1 --pretty=\"format:%s\" " + rev + " --")
+        Process("git log -1 --pretty=\"format:%s\" " + rev + " --", cwd=cwd).map(_ + "\n").addString(subject)
 
         val bodyBuilder = new StringBuilder
-        println("git log -1 --pretty=\"format:%b\" " + rev)
-        Process("git log -1 --pretty=\"format:%b\" " + rev, cwd=cwd).map(_ + "\n").addString(bodyBuilder)
+        println("git log -1 --pretty=\"format:%b\" " + rev + " --")
+        Process("git log -1 --pretty=\"format:%b\" " + rev + " --", cwd=cwd).map(_ + "\n").addString(bodyBuilder)
 
         val body = bodyBuilder.toString()
         val bodyWithPrefix =
@@ -88,8 +91,8 @@ class Git extends GeocommitSource {
         val message = subject.toString() + bodyWithPrefix
 
         val author = new StringBuilder
-        println("git log -1 --pretty=\"format:%an <%ae>\" " + rev)
-        Process("git log -1 --pretty=\"format:%an <%ae>\" " + rev, cwd=cwd).addString(author)
+        println("git log -1 --pretty=\"format:%an <%ae>\" " + rev + " --")
+        Process("git log -1 --pretty=\"format:%an <%ae>\" " + rev + " --", cwd=cwd).addString(author)
 
         (message, author toString)
     }
