@@ -15,6 +15,7 @@ class FetchServiceProject(info: ProjectInfo) extends ParentProject(info) {
     val scouchdb = "scouch.db" % "scouchdb_2.8.0" % "0.6"
 
     class WebServiceProject(info: ProjectInfo) extends DefaultWebProject(info) {
+      override val jettyPort = 8081
     }
 
     class ScanInitWorkerProject(info: ProjectInfo) extends DefaultProject(info) with ProguardProject{
