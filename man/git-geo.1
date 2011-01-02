@@ -6,8 +6,9 @@ git geo \- locate your source
 .nf
 \fIgit geo\fR setup
 \fIgit geo\fR note [<commit>]
-\fIgit geo\fR push <repository>
 \fIgit geo\fR pull <repository>
+\fIgit geo\fR sync <repository>
+\fIgit geo\fR version
 .fi
 .SH DESCRIPTION
 .sp
@@ -31,14 +32,20 @@ commit. If <commit> is given, the command will store the location for the given
 commit instead of HEAD\&.
 .RE
 .PP
-push <repository>
-.RS 4
-Push geocommits to a repository\&.
-.RE
-.PP
 pull <repository>
 .RS 4
 Pull geocommits from a repository and merge them\&.
+.RE
+.PP
+sync <repository>
+.RS 4
+Pulls geocommits from the given repository. Merges the fetched geocommits with
+the local geocommits and pushes the result to the repository\&.
+.RE
+.PP
+version
+.RS 4
+Shows the current version of git geo\&.
 .RE
 .SH EXAMPLES
 .sp
