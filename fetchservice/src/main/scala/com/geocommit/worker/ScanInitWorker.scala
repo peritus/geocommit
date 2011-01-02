@@ -41,12 +41,20 @@ object ScanInitWorker {
             println("Processing Job:")
             println(job.getData)
 
-            if (JsonParser parse job.getData match {
-                case json: JObject =>
-                    process(json)
-                case _ =>
-                    false
-            }) beanstalk delete job.getJobId
+            try {
+                if (JsonParser parse job.getData match {
+                    case json: JObject =>
+                        process(json)
+                    case _ =>
+                       false
+                }) beanstalk delete job.getJobId
+            } catch {
+                case e: Exception =>
+                    println("Failed with exception: " + e.getMessage
+                        + "\ndelay job " + job.getJobId.toString
+                        + " for 120 seconds")
+                    beanstalk.release(job.getJobId, 200, 120)
+            }
         }
     }
 
