@@ -3,4 +3,4 @@
 	url = https://github.com/alaz/JavaBeanstalkClient.git
 [submodule "fetchservice/scouchdb"]
 	path = fetchservice/scouchdb
-	url = https://github.com/debasishg/scouchdb.git
+	url = https://github.com/naderman/scouchdb.git
