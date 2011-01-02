@@ -60,19 +60,17 @@ class FetchService extends HttpServlet {
         result
     }
 
-    def lsremote(
+    def enqueueScanUpdate(
         request: JObject, response: HttpServletResponse
     ): JValue = {
-        (request \ "repository-url") match {
-            case JField(_, JString(repo)) =>
-                val git = new Git
-                JObject(List(JField(
-                    "refs/notes/geocommit",
-                    JString(git.lsremote(repo, "refs/notes/geocommit"))
-                )))
-            case _ =>
-                JNull
-        }
+        val result = (
+            "job" -> putJob("scan-update", 100, 0, 600, request)
+        )
+
+        response.setStatus(HttpServletResponse.SC_CREATED)
+        response.setContentType("application/geocommitjob+json")
+
+        result
     }
 
     override def doPost(
@@ -86,8 +84,8 @@ class FetchService extends HttpServlet {
                     request.getPathInfo match {
                         case "/scan/init" =>
                             enqueueScanInit(json, response)
-                        case "/lsremote" =>
-                            lsremote(json, response)
+                        case "/scan/update" =>
+                            enqueueScanUpdate(json, response)
                         case _ =>
                             response.setStatus(HttpServletResponse.SC_NOT_FOUND)
                             JNull
