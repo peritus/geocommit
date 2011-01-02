@@ -45,7 +45,7 @@ class Bitbucket extends GeocommitSource {
                         null
                     }
                     else {
-                        (data(0).substring(0, 12), data(1), data(2), matches.last)
+                        (data(0), data(1), data(2), matches.last)
                     }
                 }
             ).map{
