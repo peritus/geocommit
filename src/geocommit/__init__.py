@@ -24,6 +24,26 @@ class GeoGit(object):
         self.git_dir = system("git rev-parse --show-toplevel").strip('\n\r ')
         self.git_rev = system("git rev-parse HEAD").strip('\n\r ')
 
+    def getargs(self, opt_definition, argv):
+        in_opt = False
+        in_arg = False
+        arguments = []
+
+        for arg in argv:
+            if not in_opt:
+                if (opt_definition.has_key(arg)):
+                    if opt_definition[arg] == "string":
+                        in_opt = True
+                else:
+                    in_arg = True
+                    arguments.append(arg)
+            elif in_arg:
+                arguments.append(arg)
+            else:
+                in_opt = False
+
+        return arguments
+
     def get_note(self):
         provider = LocationProvider.new()
         location = provider.get_location()
@@ -125,6 +145,16 @@ class GeoGit(object):
 
         note_file.close()
 
+    def get_remote(self):
+        branch = system("git symbolic-ref -q HEAD").strip('\n\r ')
+        remote = ""
+        if branch:
+            branch = branch.replace("refs/heads/", "", 1)
+            remote = system("git config --get branch." + branch + ".remote").strip('\n\r ')
+            if remote:
+                return remote
+        return None
+
     def cmd_note(self, argv):
         note = self.get_note()
 
@@ -156,7 +186,12 @@ class GeoGit(object):
 
     def cmd_fetch(self, argv):
         if len(argv) == 0:
-            argv = ['origin']
+            remote = self.get_remote()
+            if remote:
+                argv = [remote]
+            else:
+                print >> sys.stderr, "Cannot fetch geo data: No remote specified"
+                usage("fetch")
         elif len(argv) >= 2:
             usage("fetch")
 
@@ -164,7 +199,12 @@ class GeoGit(object):
 
     def cmd_pull(self, argv):
         if len(argv) == 0:
-            argv = ['origin']
+            remote = self.get_remote()
+            if remote:
+                argv = [remote]
+            else:
+                print >> sys.stderr, "Cannot pull geo data: No remote specified"
+                usage("pull")
         elif len(argv) >= 2:
             usage("pull")
 
@@ -172,14 +212,55 @@ class GeoGit(object):
 
     def cmd_sync(self, argv):
         if len(argv) == 0:
-            argv = ['origin']
+            remote = self.get_remote()
+            if remote:
+                argv = [remote]
+            else:
+                print >> sys.stderr, "Cannot sync geo data: No remote specified"
+                usage("sync")
         elif len(argv) >= 2:
             usage("sync")
 
         self.fetch_and_merge_notes(argv[0])
 
-        print "Pushing geocommit notes"
+        print "Syncing geocommit notes"
         forward_system("git push " + argv[0] + " refs/notes/geocommit")
+
+    def cmd_push(self, argv):
+        opt_definition = {
+            "-v" : "bool",
+            "--verbose" : "bool",
+            "--repo": "string",
+            "--all": "bool",
+            "--mirror": "bool",
+            "--delete": "bool",
+            "--tags": "bool",
+            "-n": "bool",
+            "--dry-run": "bool",
+            "--porcelain": "bool",
+            "-f": "bool",
+            "--force": "bool",
+            "--thin": "bool",
+            "--receive-pack": "string",
+            "--exec": "string",
+            "-u": "bool",
+            "--set-upstream": "bool",
+            "--progress": "bool",
+        }
+
+        arguments = self.getargs(opt_definition, argv)
+
+        if len(arguments) == 0:
+            remote = self.get_remote()
+            if remote:
+                arguments = [remote]
+            else:
+                print >> sys.stderr, "Cannot push geo data: No remote specified"
+                usage("push")
+
+        self.cmd_sync([arguments[0]])
+
+        forward_system(["git", "push"] + argv)
 
     def cmd_version(self, argv):
         print "version: " + version

@@ -32,14 +32,16 @@ class Bitbucket extends GeocommitSource {
         Process(
                 "hg log --template \"{node}" + sep1 + "{author}" + sep1 + "{desc}" + sep2 + "\"",
                 cwd = repoDir
-            ).addString(output)
+            ).map(_ + "\n").addString(output)
 
         output.toString.split(sep2).map(
                 _ split sep1
+            ).filter(
+                _.length == 3
             ).map(
                 (data: Array[String]) => {
                     val r = new Regex("(geocommit\\(1\\.0\\):[^;]+;)")
-                    println(data)
+
                     val matches = r.findAllIn(data(2)).toList
                     if (matches.isEmpty) {
                         null

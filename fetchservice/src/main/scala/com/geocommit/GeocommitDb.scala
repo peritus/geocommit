@@ -26,13 +26,6 @@ case class Repository(
 
 class GeocommitDb(val host: String, val port: Int, val auth: Option[(String, String)]) {
     val http = new Http
-    auth match {
-        case None =>
-            println("No auth")
-        case Some((u, p)) =>
-            println("User: " + u)
-            println("Password: " + p)
-    }
     val db = Db(Couch(host, port, auth), "geocommit")
 
     def insertCommit(commit: Geocommit) {
