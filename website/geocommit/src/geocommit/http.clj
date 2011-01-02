@@ -44,7 +44,7 @@
        :body The body"
   [url & options]
   (if url
-    (let [#^HttpURLConnection conn (.openConnection (URL. url))
+    (let [conn (.openConnection (URL. url))
 	  opts (merge *default-opts* (apply array-map options))]
       (doseq [[k v] opts]
 	(if (and k (contains? *params* v))
@@ -56,7 +56,7 @@
 	(.setDoOutput true)
 	(.setDoInput true)
 	(.connect))
-      (if (:body opts) ; better check
+      (if (and (:body opts) (= "POST" (:method opts))); better check
 	(mspit (.getOutputStream conn) (:body opts)))
       {:status (.getResponseCode conn)
        :body (mslurp (.getInputStream conn))})))
@@ -80,6 +80,8 @@
 	     (:body
 	      (http-req service
 			:body (json-str body)
+			:method "POST"
 			:content-type "application/json"))))
        (catch Exception e
-	 (raise :type :service-error)))))
+	 (raise :type :service-error
+		:cause e)))))

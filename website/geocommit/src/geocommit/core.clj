@@ -6,7 +6,9 @@
 (ns #^{:doc "HTTP API core functions",
        :author "David Soria Parra"}
   geocommit.core
-  (:use clojure.walk)
+  (:use clojure.walk
+	clojure.contrib.logging
+	clojure.contrib.condition)
   (:require [clojure.contrib.str-utils2 :as s]
 	    [clojure.contrib.trace :as t])
   (:import (java.text SimpleDateFormat)
@@ -24,7 +26,7 @@
 	      (mapcat #(s/split % valsep)
 		      (s/split (last st) pairsep))))))
 
-(defn- tonumber [s]
+(defn- tonumber [^String s]
   (if s
     (Double. s)))
 
@@ -63,3 +65,55 @@
 			     `(-> ~val ~@s)
 			     `(-> ~val ~s))) keys))
      true false))
+
+(defmacro wrap
+  [f & body]
+  `(~f (fn [] ~@body)))
+
+(defn error-handling
+  [f]
+  (handler-case :type
+    (try
+      (f)
+      (catch IllegalArgumentException iae
+	(raise :type :parse-error
+	       :message (.getMessage iae)
+	       :cause iae))
+      (catch Exception e
+	(raise :type :service-error
+	       :message (.getMessage e)
+	       :cause e)))
+    (handle :parse-error
+       (println (:message *condition*))
+       (print-stack-trace *condition*)
+      {:status 400})
+    (handle :uri-error
+      (println (:message *condition*))
+      (print-stack-trace *condition*)
+      {:status 400})
+    (handle :service-error
+      (println (:message *condition*))
+      (print-stack-trace *condition*)
+      {:status 500})))
+
+#_(defmacro wrap-error-handling
+  [& body]
+  `(handler-case :type
+     (try
+       ~@body
+       (catch IllegalArgumentException ~iae
+	 (raise :type :parse-error))
+       (catch Exception 'e
+	 (raise :type :service-error)))
+     (handle :parse-error
+       (println (:message *condition*))
+       (print-stack-trace *condition*)
+       {:status 400})
+     (handle :uri-error
+       (println (:message *condition*))
+       (print-stack-trace *condition*)
+       {:status 400})
+     (handle :service-error
+       (println (:message *condition*))
+       (print-stack-trace *condition*)
+       {:status 500})))

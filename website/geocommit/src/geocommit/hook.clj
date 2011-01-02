@@ -9,14 +9,14 @@
   (:use geocommit.core
 	geocommit.config
 	geocommit.http
+	geocommit.services
 	experimentalworks.couchdb
 	clojure.contrib.logging
 	clojure.contrib.json
 	clojure.contrib.condition)
-  (:require [appengine-magic.core :as ae]
-	    [clojure.contrib.trace :as t]
-	    [clojure.contrib.str-utils2 :as s])
-  (:import (java.net URI URISyntaxException URL MalformedURLException)))
+  (:require [clojure.contrib.trace :as t])
+  (:import geocommit.services.Github
+	   geocommit.services.Bitbucket))
 
 (def *couchdb* (get-config :databases :geocommits))
 (defrecord Repository [_id identifier name description repository-url vcs scanned type])
@@ -26,131 +26,95 @@
   [ident]
   (map? (couch-get *couchdb* (str "repository:" ident))))
 
-(defn- sanitize-url
-  [url]
-  (try
-    (str (.normalize (URI. (str (URL. url)))))
-    (catch MalformedURLException mue
-      (raise :type :uri-error))
-    (catch URISyntaxException use
-      (raise :type :uri-error))))
+(defn unified->repository
+  [unified]
+  (if-let [{:keys [identifier name description repository-url vcs]} unified]
+    (Repository. (str "repository:" identifier)
+		 identifier
+		 name
+		 description
+		 repository-url
+		 vcs
+		 false
+		 "repository")))
 
-(defn- send-scan
-  "Send a scan to the fetch service"
-  [ident repository]
-  (:job (http-call-service (get-config :api :initscan)
-			   {:identifier ident
-			    :repository-url repository})))
-
-(defn- scan
-  "Add a scan job to the database"
-  [ident name desc repourl vcs]
-  (and (couch-add *couchdb*
-		  (Repository.
-		   (str "repository:" ident)
-		   ident name desc repourl vcs false "repository"))
-       (handler-case :type
-	 (send-scan ident repourl)
-	 (handle :service-error
-	   (comment we intentionally ignore the service error and check with a
-		    cronjob for unscanned jobs)
-	   true))))
-  
-(defn- guess-origin
+(defn guess-origin
   "Heuristic to determine the origin of the hook request.
    Returns :github or :bitbucket"
   [payload]
   (cond
-   (contains-all? payload [:repository :slug]) :bitbucket
-   (contains-all? payload :before :ref) :github))
+   (contains-all? payload [:repository :slug]) ::bitbucket
+   (contains-all? payload :before :ref) ::github))
 
-;; Bitbucket handler
-;;
-(defn- bitbucket-update-parser
-  "Parse bitbucket.org commits"
-  [ident commits]
-  (let [ctx (remove nil? (map #(parse-geocommit ident (%1 :raw_node) (%1 :author) (%1 :message) (%1 :message)) commits))]
-    (if (empty? ctx)
-      nil ctx)))
-					;
-;; Github Handler
-;;
-(defn- ident-from-url
-  "Takes a URL like http://github.com/foo and returns a repository identifier.
+(defmulti service guess-origin)
+(defmethod service ::github
+  [payload]
+  (Github. payload))
 
-   Example:
-     http://github.com/dsp/geocommit -> github.com/dsp/gecommit"
-  [url]
-  (if url
-    (.replaceFirst (sanitize-url url) "(http://|https://)" "")
-    (raise :type :parse-error)))
+(defmethod service ::bitbucket
+  [payload]
+  (Bitbucket. payload))
 
-(defn- github-notes-fetch
-  "Return refs/notes/geocommit for a repository by using the fetchservice"
-  [ident repository-url commits]
-  (:job (http-call-service (get-config :api :fetchservice)
-			   {:identifier ident
-			    :repository-url repository-url
-			    :commits (map #(:id %) commits)})))
+(defmethod service :default
+  [paylod]
+  nil)
 
-(defn- bitbucket
-  [ident payload]
-  (if (is-tracked? ident)
-    (if-let [ctx (bitbucket-update-parser ident (:commits payload))]
-      (if-let [res (couch-bulk-update *couchdb* ctx)]
-	{:status 201}
-	(raise :type :service-error))
-      {:status 200})
-    (if (scan ident
-	      (-> payload :repository :name)
-	      (-> payload :repository :description)
-	      (sanitize-url (str "http://" ident))
-	      "mercurial")
-      {:status 200})))
+(defmulti update
+  (fn [obj]
+    (if (satisfies? Service obj)
+      (vcs obj))))
 
-(defn- github
-  [ident payload]
-  (let [url (str "git://"ident".git")
-	commits (:commits payload)]
-    (if (is-tracked? ident)
-      (if-let [res (github-notes-fetch ident
-				       url
-				       commits)]
-	{:status 200}
-	(raise :type :service-error))
-      (if (scan ident
-		(-> payload :repository :name)
-		(-> payload :repository :description)
-		url
-		"git")
-	{:status 200}))))
+(defmethod update :git
+  [^Service service]
+  (let [unified (unify service)]
+    (and (:job (http-call-service (get-config :api :fetchservice)
+				  {:identifier (:identifier unified)
+				   :repository (:repository-url unified)
+				   :commits (map #(:revision %) (:commits unified))}))
+	 {:status 200})))
+
+(defmethod update :mercurial
+  [^Service service]
+  (let [unified (unify service)]
+    (if-let [ctx (not-empty
+		  (remove nil?
+			  (map
+			   (fn [{:keys [revision author message]}]
+			     (parse-geocommit (:identifier unified)
+					      revision author
+					      message message))
+			   (:commits unified))))]
+    (and (couch-bulk-update *couchdb* ctx)
+	 {:status 201}))))
+	   
+(defmethod update :default
+  [service]
+  nil)
+
+(defn scan
+  [^Service service]
+  (handler-case :type
+    (let [c (unify service)
+	  {:keys [identifier repository-url]} c]
+      (and (couch-add *couchdb*
+		      (unified->repository c))
+	   (:job (http-call-service (get-config :api :initscan)
+				    {:identifier identifier
+				     :repository-url repository-url}))
+	   {:status 200}))
+    (handle :service-error
+      #_(comment we intentionally ignore the service error and check with a
+		 cronjob for unscanned jobs)
+      true)))
 
 (defn app-hook
   "API entry point for the github/bitbucket geocommit receive service."
   [rawpayload]
-  (if rawpayload
-    (handler-case :type
-      (try
-	(if-let [payload (read-json (t/trace rawpayload))]
-	  (condp = (guess-origin payload)
-	      :github    (github (ident-from-url (-> payload :repository :url)) payload)
-	      :bitbucket (bitbucket (str "bitbucket.org"
-					 (-> payload :repository :absolute_url))
-				    payload))
-	  (raise :type :parse-error))
-	(catch Exception e
-	  (raise :type :service-error
-		 :message (.getMessage e))))
-	(handle :parse-error
-	  (error (:message "parse error"))
-	  {:status 400})
-	(handle :uri-error
-	  (with-logs
-	    (println (:message *condition*))
-	    (print-stack-trace *condition*)
-	    {:status 400}))
-	(handle :service-error
-	  (with-logs
-	    (println (:message *condition*))
-	    (print-stack-trace *condition*)
-	    {:status 500})))))
+  (wrap error-handling
+	(if (and rawpayload
+		 (let [payload (read-json rawpayload)]
+		   (let [s (service payload)]
+		     (if (is-tracked? (identifier s))
+		       (update s)
+		       (scan s)))))
+	  {:status 400})))

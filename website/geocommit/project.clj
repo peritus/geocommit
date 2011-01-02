@@ -10,7 +10,7 @@
   :dev-dependencies [[autodoc "0.7.1"]
                      [swank-clojure "1.2.0"]
 		     [appengine-magic "0.3.1"]]
-  :aot [geocommit.app_servlet]
+  :aot [geocommit.app_servlet geocommit.services]
   :repositories ["java" "http://download.java.net/maven/2/"]
   :autodoc {:name "geocommit",
 	    :page-title "geocommit.com HTTP API",
