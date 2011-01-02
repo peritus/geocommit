@@ -120,7 +120,7 @@ class GeoGit(object):
 
                 system_exit_code("git checkout refs/notes/geocommit")
                 print "Merging geocommit notes"
-                system_exit_code("git merge --strategy=recursive -Xtheirs -Xrename-threshold=100%% FETCH_HEAD")
+                system_exit_code("git merge --strategy=recursive -Xtheirs -Xrename-threshold=100% FETCH_HEAD")
                 rev = system("git rev-parse HEAD").strip('\n\r ')
                 system_exit_code("git update-ref refs/notes/geocommit " + rev)
 
