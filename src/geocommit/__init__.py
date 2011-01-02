@@ -105,7 +105,8 @@ class GeoGit(object):
 
         if remote_changes:
 
-            code, output = system_exit_code("git stash save \"geocommit temporary stash\"")
+            stash = "\"geocommit temporary stash\""
+            code, output = system_exit_code("git stash save " + stash)
 
             if code != 0:
                 print output
@@ -127,6 +128,7 @@ class GeoGit(object):
                 print "Restoring working diretory"
                 system_exit_code("git checkout " + current_rev)
                 system_exit_code("git stash apply")
+                system_exit_code("git stash drop " + stash)
         else:
             print "Already up-to-date."
 
