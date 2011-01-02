@@ -121,8 +121,9 @@
   [ident note-commit commit]
   (let [{id :id {name :name mail :email} :author message :message}
 	commit]
-    (parse-geocommit ident id (str name " <" mail ">") message
-		     (github-fetch-note ident note-commit id))))
+    (if-let [note (github-fetch-note ident note-commit id)]
+      (parse-geocommit ident id (str name " <" mail ">") message
+		       note))))
 
 (defn github-update-parser
   "Parse a sequence of github commits."
@@ -162,7 +163,7 @@
   (if rawpayload
     (handler-case :type
       (try
-	(if-let [payload (read-json rawpayload)]
+	(if-let [payload (read-json (t/trace rawpayload))]
 	  (condp = (guess-origin payload)
 	      :github    (github (ident-from-url (-> payload :repository :url)) payload)
 	      :bitbucket (bitbucket (str "bitbucket.org"
