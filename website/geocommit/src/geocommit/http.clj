@@ -10,15 +10,16 @@
 	clojure.contrib.condition
 	clojure.contrib.logging)
   (:require [clojure.contrib.trace :as t])
-  (:import (java.net URL)
-	   (java.io InputStreamReader BufferedReader PrintWriter BufferedWriter OutputStreamWriter)))
+  (:import (java.net URL HttpURLConnection)
+	   (java.io InputStreamReader BufferedReader PrintWriter BufferedWriter
+		    OutputStreamWriter OutputStream InputStream)))
 
 ;; contrib mspit/mslurp as duck-stream use sockets which are not allowed on appengine
-(defn- mspit [f content]
+(defn- mspit [#^OutputStream f content]
   (with-open [#^PrintWriter w (PrintWriter. (BufferedWriter. (OutputStreamWriter. f "UTF-8")))]
     (.print w content)))
 
-(defn- mslurp [f]
+(defn- mslurp [#^InputStream f]
   (with-open [#^BufferedReader r (BufferedReader. (InputStreamReader. f "UTF-8"))]
     (let [sb (StringBuilder.)]
       (loop [c (.read r)]
@@ -42,39 +43,43 @@
        :content-type e.g. \"application/json\"
        :body The body"
   [url & options]
-  (let [conn (.openConnection (URL. url))
-	opts (merge *default-opts* (apply array-map options))]
-    (doseq [[k v] opts]
-      (if (and k (contains? *params* v))
-	(.setRequestProperty conn (*params* k) v)))
-    (doto conn
-      (.setRequestProperty "User-Agent" "geocommit http client")
-      (.setRequestProperty "Connection" "Close")
-      (.setRequestMethod (:method opts))
-      (.setDoOutput true)
-      (.setDoInput true)
-      (.connect))
-    (if (:body opts) ; better check
-      (mspit (.getOutputStream conn) (:body opts)))
-    {:status (.getResponseCode conn)
-     :body (mslurp (.getInputStream conn))}))
+  (if url
+    (let [#^HttpURLConnection conn (.openConnection (URL. url))
+	  opts (merge *default-opts* (apply array-map options))]
+      (doseq [[k v] opts]
+	(if (and k (contains? *params* v))
+	  (.setRequestProperty conn (*params* k) v)))
+      (doto conn
+	(.setRequestProperty "User-Agent" "geocommit http client")
+	(.setRequestProperty "Connection" "Close")
+	(.setRequestMethod (:method opts))
+	(.setDoOutput true)
+	(.setDoInput true)
+	(.connect))
+      (if (:body opts) ; better check
+	(mspit (.getOutputStream conn) (:body opts)))
+      {:status (.getResponseCode conn)
+       :body (mslurp (.getInputStream conn))})))
 
 (defn http-call-service
   "Call a http service using http-req.
    Uses json as exchange format."
   ([service]
      (try
-       (read-json
-	(:body
-	 (http-req service)))
+       (and service
+	    (read-json
+	     (:body
+	      (http-req service))))
        (catch Exception e
 	 (raise :type :service-error))))
   ([service body]
      (try
-       (read-json
-	(:body
-	 (http-req service
-		   :body (json-str body)
-		   :content-type "application/json")))
+       (and service
+	    body
+	    (read-json
+	     (:body
+	      (http-req service
+			:body (json-str body)
+			:content-type "application/json"))))
        (catch Exception e
 	 (raise :type :service-error)))))
