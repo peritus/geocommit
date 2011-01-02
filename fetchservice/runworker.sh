@@ -23,4 +23,4 @@ export JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,addre
 scala -version
 #jswat -classpath "$LIBS" com.geocommit.worker.ScanInitWorker
 #scala -classpath "$LIBS" com.geocommit.TestCouch
-scala -classpath "$LIBS" com.geocommit.worker.ScanInitWorker
+scala -classpath "$LIBS" com.geocommit.worker.Start
