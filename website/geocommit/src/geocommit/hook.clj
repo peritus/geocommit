@@ -61,7 +61,7 @@
    Returns :github or :bitbucket"
   [payload]
   (cond
-   (contains-all? payload :broker :service) :bitbucket
+   (contains-all? payload [:repository :slug]) :bitbucket
    (contains-all? payload :before :ref) :github))
 
 ;; Bitbucket handler
