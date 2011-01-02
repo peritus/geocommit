@@ -14,10 +14,10 @@ import net.liftweb.json.JsonDSL._
 import java.util.Properties
 import java.io.FileInputStream
 
-class ScanInitWorker(
+class ScanUpdateWorker(
     beanstalk: ClientImpl,
     geocommitdb: GeocommitDb
-) extends Worker("scan-init", beanstalk, geocommitdb) {
+) extends Worker("scan-update", beanstalk, geocommitdb) {
 
     def scanInit(repo: String, id: String): Boolean = {
         (if (id.startsWith("github")) {
