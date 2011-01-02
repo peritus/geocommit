@@ -69,7 +69,7 @@
 (defn- bitbucket-update-parser
   "Parse bitbucket.org commits"
   [ident commits]
-  (let [ctx (remove nil? (map #(parse-geocommit ident (%1 :node) (%1 :author) (%1 :message) (%1 :message)) commits))]
+  (let [ctx (remove nil? (map #(parse-geocommit ident (%1 :raw_node) (%1 :author) (%1 :message) (%1 :message)) commits))]
     (if (empty? ctx)
       nil ctx)))
 					;
