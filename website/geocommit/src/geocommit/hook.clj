@@ -38,9 +38,9 @@
 (defn- send-scan
   "Send a scan to the fetch service"
   [ident repository]
-  (http-call-service (t/trace (get-config :api :initscan))
-		     {:identifier ident
-		      :repository-url repository}))
+  (:job (http-call-service (get-config :api :initscan)
+			   {:identifier ident
+			    :repository-url repository})))
 
 (defn- scan
   "Add a scan job to the database"
@@ -75,9 +75,6 @@
 					;
 ;; Github Handler
 ;;
-(defn- ident-to-repository [ident]
-  (str "git://"ident".git"))
-
 (defn- ident-from-url
   "Takes a URL like http://github.com/foo and returns a repository identifier.
 
@@ -88,55 +85,17 @@
     (.replaceFirst (sanitize-url url) "(http://|https://)" "")
     (raise :type :parse-error)))
 
-(defn- github-api-url
-  "Takes an identifier and API call location like /blob/show/ and an infinite
-   number of additional parameters and builds a normalized github.com API URL.
-
-   It is necesary to normalize a github.com API URL."
-  [ident sub & rest]
-  (str
-   (.normalize (URI. (str
-		      (get-config :api :github)
-		      sub
-		      (.replaceFirst ident "github\\.com/" "")
-		      "/"
-		      (apply str rest))))))
-
-(defn- github-notes-commit
+(defn- github-notes-fetch
   "Return refs/notes/geocommit for a repository by using the fetchservice"
-  [repository-url]
-  (:refs/notes/geocommit
-   (http-call-service (get-config :api :fetchservice)
-		      {:repository-url repository-url})))
+  [repository-url commits]
+  (:job (http-call-service (get-config :api :fetchservice)
+			   {:repository-url repository-url
+			    :commits (map #(:id %) commits)})))
 
-(defn- github-fetch-note
-  "Return the the geocommit note for a git SHA1.
-   We need the correct note-commit tree id."
-  [ident note-commit id]
-  (-> (t/trace (http-call-service (t/trace (str (github-api-url ident "/blob/show/" note-commit "/" (s/take id 2) "/" (s/drop id 2))))))
-      :blob :data))
-
-(defn- parse-github-geocommit
-  "Parse a github geocommit note. and return a geocommit struct."
-  [ident note-commit commit]
-  (let [{id :id {name :name mail :email} :author message :message}
-	commit]
-    (if-let [note (github-fetch-note ident note-commit id)]
-      (parse-geocommit ident id (str name " <" mail ">") message
-		       note))))
-
-(defn github-update-parser
-  "Parse a sequence of github commits."
-  [ident commits]
-  (if-let [notehash (github-notes-commit (ident-to-repository ident))]
-    (if-let [ctx (remove nil? (map #(parse-github-geocommit ident notehash %) commits))]
-      (if (empty? ctx)
-	nil ctx))))
-
-(defn- handle-service
-  [ident payload repository-url vcs parser]
+(defn- bitbucket
+  [ident payload]
   (if (is-tracked? ident)
-    (if-let [ctx (parser ident (:commits payload))]
+    (if-let [ctx (bitbucket-update-parser ident (:commits payload))]
       (if-let [res (couch-bulk-update *couchdb* ctx)]
 	{:status 201}
 	(raise :type :service-error))
@@ -144,18 +103,25 @@
     (if (scan ident
 	      (-> payload :repository :name)
 	      (-> payload :repository :description)
-	      repository-url
-	      vcs)
+	      (sanitize-url (str "http://" ident))
+	      "mercurial")
       {:status 200})))
 
-(defn- github [ident payload]
-  (let [url (str "git://"ident".git")]
-    (info url)
-    (handle-service ident payload url "git" github-update-parser)))
-
-(defn- bitbucket [ident payload]
-  (let [url  (sanitize-url (str "http://" ident))]
-    (handle-service ident payload url "mercurial" bitbucket-update-parser)))
+(defn- github
+  [ident payload]
+  (let [url (str "git://"ident".git")
+	commits (:commits payload)]
+    (if (is-tracked? ident)
+      (if-let [res (github-notes-fetch url
+				       commits)]
+	{:status 200}
+	(raise :type :service-error))
+      (if (scan ident
+		(-> payload :repository :name)
+		(-> payload :repository :description)
+		url
+		"git")
+	{:status 200}))))
 
 (defn app-hook
   "API entry point for the github/bitbucket geocommit receive service."
