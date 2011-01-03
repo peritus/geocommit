@@ -4,7 +4,8 @@ import com.geocommit.Geocommit;
 import java.security.MessageDigest;
 import java.lang.{ProcessBuilder, Process};
 import java.util.Arrays;
-import java.io.{BufferedReader, InputStreamReader};
+import java.io.{BufferedReader, InputStreamReader, File};
+import scala.io.Source;
 
 abstract class GeocommitSource {
     implicit def convertScalaListToJavaList(aList:List[String]) =
@@ -18,21 +19,23 @@ abstract class GeocommitSource {
         val md = MessageDigest getInstance "SHA"
         val bytes = md digest repo
 
-        bytes.map("%02x" format _ & 0xff).mkString
+        "../repositories/" + bytes.map("%02x" format _ & 0xff).mkString
     }
 
-    def startProc(cmd: List[String]): Process = {
-        new ProcessBuilder(cmd).start()
+    def startProc(cmd: List[String], cwd: String = "."): Process = {
+        val pb = new ProcessBuilder(cmd)
+        pb.directory(new File(cwd))
+        pb.start()
     }
 
-    def procOutput(proc: Process): Stream[String] = {
-        val reader = new BufferedReader(new InputStreamReader(proc.getInputStream()))
-        Stream.continually(reader readLine)
+    def procOutput(proc: Process): Iterator[String] = {
+        Source.fromInputStream(proc.getInputStream()).getLines()
     }
 
-    def cmdWait(cmd: List[String]) = startProc(cmd).waitFor()
+    def cmdWait(cmd: List[String], cwd: String = ".") = startProc(cmd, cwd).waitFor()
 
     def clone(repo: String);
     def delete(repo: String);
     def getGeocommits(repo: String, id: String): List[Geocommit];
+    def getGeocommits(repo: String, id: String, commits: List[String]): List[Geocommit];
 }

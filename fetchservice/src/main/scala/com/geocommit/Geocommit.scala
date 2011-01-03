@@ -6,17 +6,21 @@ import scala.collection.immutable.HashMap
 import sjson.json._
 import scala.reflect._
 import scala.annotation.target._
-
+import scala.util.matching.Regex
 
 abstract class GeocommitFormat {
     def getPrefix(): String
     def getEndMarker(): String
     def getElementSeparator(): String
     def getKeyValueSeparator(): String
+    def getRegex(): String
     def getPrefixLength(): Int = getPrefix().length()
 
     def getMap(data: String): Map[String, String] = {
-        Map(data.substring(
+        val r = new Regex(getRegex())
+        val matches = r.findAllIn(data).toList
+
+        Map(matches.last.substring(
                 getPrefixLength,
                 data indexOf getEndMarker match {
                     case x if x < 0 => data.length() - 1
@@ -34,6 +38,10 @@ abstract class GeocommitFormat {
             : _*
         )
     }
+
+    def parsable(data: String): Boolean = {
+        data.matches(getRegex())
+    }
 }
 
 object GeocommitShortFormat extends GeocommitFormat {
@@ -41,6 +49,7 @@ object GeocommitShortFormat extends GeocommitFormat {
     override def getEndMarker(): String = ";"
     override def getElementSeparator(): String = ",\\s*"
     override def getKeyValueSeparator(): String = "\\s+"
+    override def getRegex(): String = "(geocommit\\(1\\.0\\):[^;]+;)"
 }
 
 object GeocommitLongFormat extends GeocommitFormat {
@@ -48,6 +57,7 @@ object GeocommitLongFormat extends GeocommitFormat {
     override def getEndMarker(): String = "\n\n"
     override def getElementSeparator(): String = "\\s*\n\\s*"
     override def getKeyValueSeparator(): String = ":\\s*"
+    override def getRegex(): String = "(geocommit \\(1\\.0\\)\n(?:[^;]+\n)+(?:\n|$))"
 }
 
 @BeanInfo
@@ -109,5 +119,13 @@ object Geocommit {
             values.get("hacc").map(_.toDouble),
             values.get("vacc").map(_.toDouble)
         )
+    }
+
+    def parsable(data: String): Boolean = {
+        List(
+            GeocommitLongFormat, GeocommitShortFormat
+        ).filter(
+            f => f.parsable(data)
+        ).length > 0
     }
 }
