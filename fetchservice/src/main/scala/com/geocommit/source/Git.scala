@@ -1,6 +1,7 @@
 package com.geocommit.source;
 
 import com.geocommit.Geocommit;
+import java.io.{File => JFile}
 import scala.tools.nsc.io._
 import scala.collection.mutable.StringBuilder;
 
@@ -20,8 +21,13 @@ class Git extends GeocommitSource {
     def clone(repo: String) {
         val repoDir = getRepoDir(repo)
         // foreach necessary to wait for termination
-        println("git clone \"" + repo + "\" " + repoDir)
-        cmdWait(List("git", "clone", repo, repoDir))
+        if (new JFile(repoDir).exists()) {
+          println("git fetch \"" + repo + "\" " + repoDir)
+          cmdWait(List("git", "fetch"), repoDir)
+        } else {
+          println("git clone \"" + repo + "\" " + repoDir)
+          cmdWait(List("git", "clone", repo, repoDir))
+        }
         println("git fetch origin refs/notes/geocommit")
         Process("git fetch origin refs/notes/geocommit", cwd = repoDir).foreach(_ => null)
         println("git checkout refs/notes/geocommit")
