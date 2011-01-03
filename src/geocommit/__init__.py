@@ -11,7 +11,7 @@ from geocommit.locationprovider import LocationProvider
 
 from geocommit.util import system, system_exit_code, forward_system
 
-version = "0.9.1b1"
+version = "0.9.1"
 
 class GeoGit(object):
 
