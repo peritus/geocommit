@@ -95,7 +95,9 @@ class GeoGit(object):
 
     def fetch_notes(self, remote):
         print "Fetching geocommit notes"
-        forward_system("git fetch " + remote + " refs/notes/geocommit")
+        code, output = system_exit_code("git fetch " + remote + " refs/notes/geocommit")
+        if code != 0 and output != "fatal: Couldn't find remote ref refs/notes/geocommit\n":
+            sys.exit(code)
 
     def fetch_and_merge_notes(self, remote):
         self.fetch_notes(remote)
