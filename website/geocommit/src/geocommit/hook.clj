@@ -87,9 +87,10 @@
 
 (defn- github-notes-fetch
   "Return refs/notes/geocommit for a repository by using the fetchservice"
-  [repository-url commits]
+  [ident repository-url commits]
   (:job (http-call-service (get-config :api :fetchservice)
-			   {:repository-url repository-url
+			   {:identifier ident
+			    :repository-url repository-url
 			    :commits (map #(:id %) commits)})))
 
 (defn- bitbucket
@@ -112,7 +113,8 @@
   (let [url (str "git://"ident".git")
 	commits (:commits payload)]
     (if (is-tracked? ident)
-      (if-let [res (github-notes-fetch url
+      (if-let [res (github-notes-fetch ident
+				       url
 				       commits)]
 	{:status 200}
 	(raise :type :service-error))
