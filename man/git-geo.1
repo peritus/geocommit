@@ -6,9 +6,11 @@ git geo \- locate your source
 .nf
 \fIgit geo\fR setup
 \fIgit geo\fR note [<commit>]
-\fIgit geo\fR pull <repository>
-\fIgit geo\fR push <repository>
-\fIgit geo\fR sync <repository>
+\fIgit geo\fR pull [<repository>]
+\fIgit geo\fR push [\-\-all | \-\-mirror | \-\-tags] [\-n | \-\-dry\-run] [\-\-receive\-pack=<git\-receive\-pack>]
+             [\-\-repo=<repository>] [\-f | \-\-force] [\-v | \-\-verbose] [\-u | \-\-set\-upstream]
+             [<repository> [<refspec>\&...]]
+\fIgit geo\fR sync [<repository>]
 \fIgit geo\fR version
 .fi
 .SH DESCRIPTION
@@ -26,25 +28,25 @@ Setup a git post-commit hook in the current git repository to automatically
 attach location information to your commits\&.
 .RE
 .PP
-note [<commit>]
+note
 .RS 4
 Obtain your current location and store it in a git note referencing the HEAD
 commit. If <commit> is given, the command will store the location for the given
 commit instead of HEAD\&.
 .RE
 .PP
-pull <repository>
+pull
 .RS 4
 Pull geocommits from a repository and merge them\&.
 .RE
 .PP
-push <repository>
+push
 .RS 4
 Like \fIgit push\fR but also pushes geocommits. If necessary, git geo push will
 merge geocommits\&.
 .RE
 .PP
-sync <repository>
+sync
 .RS 4
 Pulls geocommits from the given repository. Merges the fetched geocommits with
 the local geocommits and pushes the result to the repository\&.
