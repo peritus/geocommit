@@ -9,7 +9,7 @@ import com.surftools.BeanstalkClientImpl.ClientImpl
 import scala.collection.immutable.HashMap
 import net.liftweb.json.JsonParser
 import net.liftweb.json.JsonAST
-import net.liftweb.json.JsonAST.{JValue, JObject, JField, JNull, JString}
+import net.liftweb.json.JsonAST.{JValue, JObject, JField, JArray, JString}
 import net.liftweb.json.JsonDSL._
 import java.util.Properties
 import java.io.FileInputStream
@@ -19,7 +19,7 @@ class ScanUpdateWorker(
     geocommitdb: GeocommitDb
 ) extends Worker("scan-update", beanstalk, geocommitdb) {
 
-    def scanInit(repo: String, id: String): Boolean = {
+    def scanUpdate(repo: String, id: String, commits: List[String]): Boolean = {
         (if (id.startsWith("github")) {
             Some(new Git)
         }
@@ -31,11 +31,9 @@ class ScanUpdateWorker(
         }) match {
             case Some(source) =>
                 source.clone(repo)
-                source.getGeocommits(repo, id).foreach(
+                source.getGeocommits(repo, id, commits).foreach(
                     x => geocommitdb.insertCommit(x)
                 )
-                //source.delete(repo)
-                geocommitdb.repoSetScanned(id)
                 true
             case _ =>
                 false
@@ -47,7 +45,15 @@ class ScanUpdateWorker(
             case JField(_, JString(repo)) =>
                 (json \ "identifier") match {
                     case JField(_, JString(id)) =>
-                        scanInit(repo, id)
+                        (json \ "commits") match {
+                            case JField(_, JArray(commits)) =>
+                                scanUpdate(repo, id, commits.map{
+                                    case JString(rev) => rev
+                                    case _ => ""
+                                }.filter(_ != ""))
+                            case _ =>
+                                false
+                        }
                     case _ =>
                         false
                 }

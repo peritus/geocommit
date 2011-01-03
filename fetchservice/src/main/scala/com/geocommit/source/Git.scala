@@ -40,29 +40,56 @@ class Git extends GeocommitSource {
 
     def getGeocommits(repo: String, id: String): List[Geocommit] = {
         println("git notes --ref geocommit list cwd=" + getRepoDir(repo))
-        Process(
+        parseNotes(
+            repo, id,
+            Process(
                 "git notes --ref geocommit list", cwd = getRepoDir(repo)
-            ).map(
-                _ split "\\s+"
-            ).map(
-                (data: Array[String]) => {
-                    val noteObject = data.head
-                    val commit = data.last
+            ).toList
+        )
+    }
 
-                    (
-                        commit,
-                        getCommit(commit, getRepoDir(repo)),
-                        getObject(noteObject, getRepoDir(repo))
-                    )
+    def getGeocommits(repo: String, id: String, commits: List[String]): List[Geocommit] = {
+        val repoDir = getRepoDir(repo)
+        parseNotes(
+            repo, id,
+            commits.map(
+                (rev: String) => {
+                    println("git notes --ref geocommit list " + rev)
+                    val note = procOutput(
+                        startProc(
+                            List("git", "notes", "--ref", "geocommit", "list", rev),
+                            repoDir
+                        )
+                    ).toList.head
+                    note + " " + rev
                 }
-            ).filter{
-                case (rev: String, (message: String, author: String), note: String) =>
-                    !message.isEmpty || !author.isEmpty
-                case _ => false
-            }.map{
-                case (rev: String, (message: String, author: String), note: String) =>
-                    Geocommit(id, rev, message, author, note)
-            }.toList
+            ).toList
+        )
+    }
+
+    def parseNotes(repo: String, id: String, notesOutput: List[String]): List[Geocommit] = {
+        notesOutput.map(
+            _ split "\\s+"
+        ).filter(
+            _.length == 2
+        ).map(
+            (data: Array[String]) => {
+                val noteObject = data.head
+                val commit = data.last
+                (
+                    commit,
+                    getCommit(commit, getRepoDir(repo)),
+                    getObject(noteObject, getRepoDir(repo))
+                )
+            }
+        ).filter{
+            case (rev: String, (message: String, author: String), note: String) =>
+                !message.isEmpty || !author.isEmpty
+            case _ => false
+        }.map{
+            case (rev: String, (message: String, author: String), note: String) =>
+                Geocommit(id, rev, message, author, note)
+        }.toList
     }
 
     def getObject(obj: String, cwd: String): String = {

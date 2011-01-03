@@ -60,4 +60,8 @@ class Bitbucket extends GeocommitSource {
                 case _ => true
             }
     }
+
+    def getGeocommits(repo: String, id: String, commits: List[String]): List[Geocommit] = {
+        List()
+    }
 }
