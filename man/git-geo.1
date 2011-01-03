@@ -7,6 +7,7 @@ git geo \- locate your source
 \fIgit geo\fR setup
 \fIgit geo\fR note [<commit>]
 \fIgit geo\fR pull <repository>
+\fIgit geo\fR push <repository>
 \fIgit geo\fR sync <repository>
 \fIgit geo\fR version
 .fi
@@ -37,6 +38,12 @@ pull <repository>
 Pull geocommits from a repository and merge them\&.
 .RE
 .PP
+push <repository>
+.RS 4
+Like \fIgit push\fR but also pushes geocommits. If necessary, git geo push will
+merge geocommits\&.
+.RE
+.PP
 sync <repository>
 .RS 4
 Pulls geocommits from the given repository. Merges the fetched geocommits with
@@ -57,11 +64,8 @@ To setup an automatic geocommit hook type
 .SH DISCUSSION
 .sp
 \fIgeo git\fR stores geocommits as git notes (see \fIgit help notes\fR). It uses
-the "geocommit" namespace. \fIgit geo push\fR will only push, pull and
+the "geocommit" namespace. \fIgit geo sync\fR will only push, pull and
 merge geocommit notes.
-.sp
-Unlike git's push and pull command, \fIgit geo push\fR requires a repository
-argument and will not push to "origin" by default.
 .SH WEBSITE
 .sp
 For more information about geocommits and the geocommit format visit http://geocommit.com/
