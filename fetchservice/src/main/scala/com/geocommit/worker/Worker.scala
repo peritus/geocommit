@@ -17,9 +17,9 @@ import java.io.FileInputStream
 
 abstract class Worker(
     val tube: String,
-    val beanstalk: ClientImpl,
     val geocommitdb: GeocommitDb
 ) extends Actor {
+    val beanstalk = new ClientImpl("localhost", 11300)
 
     implicit def byteArray2String(b: Array[Byte]): String =
         new String(b, "UTF-8")
@@ -44,7 +44,8 @@ abstract class Worker(
                 case e: Exception =>
                     println("Failed with exception: " + e.getMessage
                         + "\ndelay job " + job.getJobId.toString
-                        + " for 120 seconds")
+                        + " for 120 seconds\n\nStack trace:\n")
+                    e.printStackTrace
                     beanstalk.release(job.getJobId, 200, 120)
             }
         }

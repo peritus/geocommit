@@ -15,8 +15,6 @@ import java.util.Properties
 import java.io.FileInputStream
 
 object Start {
-    val beanstalk = new ClientImpl("localhost", 11300)
-
     val properties = new Properties
     properties.load(new FileInputStream("config.properties"))
 
@@ -30,8 +28,8 @@ object Start {
     )
 
     def main(args: Array[String]) {
-        val scanInit = new ScanInitWorker(beanstalk, geocommitdb)
-        val scanUpdate = new ScanUpdateWorker(beanstalk, geocommitdb)
+        val scanInit = new ScanInitWorker(geocommitdb)
+        val scanUpdate = new ScanUpdateWorker(geocommitdb)
 
         scanInit.start
         scanUpdate.start

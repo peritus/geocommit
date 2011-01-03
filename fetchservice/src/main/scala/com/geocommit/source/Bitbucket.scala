@@ -2,7 +2,6 @@ package com.geocommit.source;
 
 import com.geocommit.Geocommit
 import scala.tools.nsc.io._
-import scala.util.matching.Regex
 import scala.collection.mutable.StringBuilder
 
 class Bitbucket extends GeocommitSource {
@@ -40,22 +39,14 @@ class Bitbucket extends GeocommitSource {
                 _.length == 3
             ).map(
                 (data: Array[String]) => {
-                    val r = new Regex("(geocommit\\(1\\.0\\):[^;]+;)")
-
-                    val matches = r.findAllIn(data(2)).toList
-                    if (matches.isEmpty) {
+                    if (Geocommit.parsable(data(2))) {
                         null
                     }
                     else {
-                        (data(0), data(1), data(2), matches.last)
+                        Geocommit(id, data(0), data(2), data(1), data(2))
                     }
                 }
-            ).map{
-                case (rev: String, author: String, message: String, geoData: String) => {
-                    Geocommit(id, rev, message, author, geoData)
-                }
-                case _ => null
-            }.toList.filter{
+            ).toList.filter{
                 case null => false
                 case _ => true
             }

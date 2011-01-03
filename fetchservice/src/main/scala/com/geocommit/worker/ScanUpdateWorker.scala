@@ -5,7 +5,6 @@ import com.geocommit.source.Git
 import com.geocommit.source.Bitbucket
 import com.geocommit.GeocommitDb
 
-import com.surftools.BeanstalkClientImpl.ClientImpl
 import scala.collection.immutable.HashMap
 import net.liftweb.json.JsonParser
 import net.liftweb.json.JsonAST
@@ -15,9 +14,8 @@ import java.util.Properties
 import java.io.FileInputStream
 
 class ScanUpdateWorker(
-    beanstalk: ClientImpl,
     geocommitdb: GeocommitDb
-) extends Worker("scan-update", beanstalk, geocommitdb) {
+) extends Worker("scan-update", geocommitdb) {
 
     def scanUpdate(repo: String, id: String, commits: List[String]): Boolean = {
         (if (id.startsWith("github")) {

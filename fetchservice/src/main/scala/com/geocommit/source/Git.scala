@@ -60,8 +60,13 @@ class Git extends GeocommitSource {
                             List("git", "notes", "--ref", "geocommit", "list", rev),
                             repoDir
                         )
-                    ).toList.head
-                    note + " " + rev
+                    ).toList
+                    if (note.length > 0) {
+                        note.head + " " + rev
+                    }
+                    else {
+                        ""
+                    }
                 }
             ).toList
         )
@@ -83,8 +88,10 @@ class Git extends GeocommitSource {
                 )
             }
         ).filter{
-            case (rev: String, (message: String, author: String), note: String) =>
-                !message.isEmpty || !author.isEmpty
+            case (rev: String, (message: String, author: String), note: String) => {
+                println(note)
+                Geocommit.parsable(note) && (!message.isEmpty || !author.isEmpty)
+            }
             case _ => false
         }.map{
             case (rev: String, (message: String, author: String), note: String) =>

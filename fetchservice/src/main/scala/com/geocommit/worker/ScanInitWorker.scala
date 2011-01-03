@@ -15,9 +15,8 @@ import java.util.Properties
 import java.io.FileInputStream
 
 class ScanInitWorker(
-    beanstalk: ClientImpl,
     geocommitdb: GeocommitDb
-) extends Worker("scan-init", beanstalk, geocommitdb) {
+) extends Worker("scan-init", geocommitdb) {
 
     def scanInit(repo: String, id: String): Boolean = {
         (if (id.startsWith("github")) {
