@@ -1,3 +1,4 @@
 include src/geocommit/provider/corelocation/*.m
 include src/geocommit/provider/corelocation/*.h
 include README.rst
+include man/*.1
