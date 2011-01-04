@@ -8,7 +8,7 @@ from setuptools.extension import Extension
 from distutils.command.build_ext import build_ext as _build_ext
 from distutils.command.install_data import install_data as _install_data
 
-extra_args = {'cmdclass': _install_data}
+extra_args = {'cmdclass': {'install_data': _install_data}}
 
 if get_platform().startswith('macosx'):
     class install_data(_install_data):
