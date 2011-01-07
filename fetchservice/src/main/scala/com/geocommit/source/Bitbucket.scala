@@ -40,10 +40,10 @@ class Bitbucket extends GeocommitSource {
             ).map(
                 (data: Array[String]) => {
                     if (Geocommit.parsable(data(2))) {
-                        null
+                        Geocommit(id, data(0), data(2), data(1), data(2))
                     }
                     else {
-                        Geocommit(id, data(0), data(2), data(1), data(2))
+                        null
                     }
                 }
             ).toList.filter{

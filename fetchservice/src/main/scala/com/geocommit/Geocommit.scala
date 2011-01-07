@@ -22,8 +22,8 @@ abstract class GeocommitFormat {
 
         Map(matches.last.substring(
                 getPrefixLength,
-                data indexOf getEndMarker match {
-                    case x if x < 0 => data.length() - 1
+                matches.last.indexOf(getEndMarker) match {
+                    case x if x < 0 => matches.last.length() - 1
                     case n => n
                 }
             ).split(
@@ -40,7 +40,11 @@ abstract class GeocommitFormat {
     }
 
     def parsable(data: String): Boolean = {
-        data.matches(getRegex())
+        val r = new Regex(getRegex())
+        r.findFirstIn(data) match {
+            case Some(m) => true
+            case None => false
+        }
     }
 }
 
@@ -102,7 +106,7 @@ object Geocommit {
         val values = List(
                 GeocommitLongFormat, GeocommitShortFormat
             ).filter(
-                f => data.startsWith(f.getPrefix())
+                f => f.parsable(data)
             ).head.getMap(data)
 
         new Geocommit(
