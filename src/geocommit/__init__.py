@@ -141,6 +141,7 @@ class GeoGit(object):
 
     def cmd_note(self, argv):
         print "Retrieving location ...",
+        sys.stdout.flush()
         note = self.get_note()
         print "found."
 
