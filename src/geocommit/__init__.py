@@ -196,7 +196,7 @@ class GeoGit(object):
 
         self.fetch_and_merge_notes(argv[0])
 
-    def cmd_sync(self, argv):
+    def cmd_sync(self, argv, push=True):
         if len(argv) == 0:
             remote = self.get_remote()
             if remote:
@@ -209,8 +209,9 @@ class GeoGit(object):
 
         self.fetch_and_merge_notes(argv[0])
 
-        print "Syncing geocommit notes"
-        forward_system("git push " + argv[0] + " refs/notes/geocommit")
+        if push:
+            print "Syncing geocommit notes"
+            forward_system("git push " + argv[0] + " refs/notes/geocommit")
 
     def cmd_push(self, argv):
         opt_definition = {
@@ -244,9 +245,9 @@ class GeoGit(object):
                 print >> sys.stderr, "Cannot push geo data: No remote specified"
                 usage("push")
 
-        self.cmd_sync([arguments[0]])
+        self.cmd_sync([arguments[0]], False)
 
-        forward_system(["git", "push"] + argv)
+        forward_system(["git", "push"] + argv + ["refs/notes/geocommit"])
 
     def cmd_version(self, argv):
         print "version: " + version
