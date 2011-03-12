@@ -140,7 +140,9 @@ class GeoGit(object):
         return None
 
     def cmd_note(self, argv):
+        print "Retrieving location ...",
         note = self.get_note()
+        print "found."
 
         git_rev = self.git_rev
 
