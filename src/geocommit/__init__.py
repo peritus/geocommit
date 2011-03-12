@@ -242,13 +242,19 @@ class GeoGit(object):
             remote = self.get_remote()
             if remote:
                 arguments = [remote]
+                argv += [remote]
             else:
                 print >> sys.stderr, "Cannot push geo data: No remote specified"
                 usage("push")
+        if len(arguments) == 1:
+            arguments += [":"]
+            argv += [":"]
+
+        argv += ["refs/notes/geocommit"]
 
         self.cmd_sync([arguments[0]], False)
 
-        forward_system(["git", "push"] + argv + ["refs/notes/geocommit"])
+        forward_system(["git", "push"] + argv)
 
     def cmd_version(self, argv):
         print "version: " + version
