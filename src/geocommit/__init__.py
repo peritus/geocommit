@@ -108,31 +108,9 @@ class GeoGit(object):
         remote_changes = system("git rev-list --max-count=1 refs/notes/geocommit..FETCH_HEAD").strip('\n\r ')
 
         if remote_changes:
-
-            stash = "\"geocommit temporary stash\""
-            code, output = system_exit_code("git stash save " + stash)
-
-            if code != 0:
-                print output
-
-            else:
-                current_rev = system("git symbolic-ref -q HEAD").strip('\n\r ')
-
-                if not current_rev:
-                    current_rev = system("git rev-parse HEAD").strip('\n\r ')
-                elif current_rev.find("refs/heads/") == 0:
-                    current_rev = current_rev[len("refs/heads/"):]
-
-                system_exit_code("git checkout refs/notes/geocommit")
-                print "Merging geocommit notes"
-                system_exit_code("git merge --strategy=recursive -Xtheirs -Xrename-threshold=100% FETCH_HEAD")
-                rev = system("git rev-parse HEAD").strip('\n\r ')
-                system_exit_code("git update-ref refs/notes/geocommit " + rev)
-
-                print "Restoring working diretory"
-                system_exit_code("git checkout " + current_rev)
-                system_exit_code("git stash apply")
-                system_exit_code("git stash drop " + stash)
+            print "Merging geocommit notes"
+            system_exit_code("git update-ref refs/notes/geocommit-remote FETCH_HEAD")
+            system_exit_code("git notes --ref geocommit merge --strategy=theirs geocommit-remote")
         else:
             print "Already up-to-date."
 
