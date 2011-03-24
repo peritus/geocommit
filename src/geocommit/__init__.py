@@ -229,6 +229,7 @@ class GeoGit(object):
             "-f": "bool",
             "--force": "bool",
             "--thin": "bool",
+            "--no-thin": "bool",
             "--receive-pack": "string",
             "--exec": "string",
             "-u": "bool",
