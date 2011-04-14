@@ -19,7 +19,7 @@
   (with-open [#^PrintWriter w (PrintWriter. (BufferedWriter. (OutputStreamWriter. f "UTF-8")))]
     (.print w content)))
 
-(defn- mslurp [#^InputStream f]
+(defn mslurp [#^InputStream f]
   (with-open [#^BufferedReader r (BufferedReader. (InputStreamReader. f "UTF-8"))]
     (let [sb (StringBuilder.)]
       (loop [c (.read r)]
