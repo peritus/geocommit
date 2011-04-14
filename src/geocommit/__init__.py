@@ -108,31 +108,9 @@ class GeoGit(object):
         remote_changes = system("git rev-list --max-count=1 refs/notes/geocommit..FETCH_HEAD").strip('\n\r ')
 
         if remote_changes:
-
-            stash = "\"geocommit temporary stash\""
-            code, output = system_exit_code("git stash save " + stash)
-
-            if code != 0:
-                print output
-
-            else:
-                current_rev = system("git symbolic-ref -q HEAD").strip('\n\r ')
-
-                if not current_rev:
-                    current_rev = system("git rev-parse HEAD").strip('\n\r ')
-                elif current_rev.find("refs/heads/") == 0:
-                    current_rev = current_rev[len("refs/heads/"):]
-
-                system_exit_code("git checkout refs/notes/geocommit")
-                print "Merging geocommit notes"
-                system_exit_code("git merge --strategy=recursive -Xtheirs -Xrename-threshold=100% FETCH_HEAD")
-                rev = system("git rev-parse HEAD").strip('\n\r ')
-                system_exit_code("git update-ref refs/notes/geocommit " + rev)
-
-                print "Restoring working diretory"
-                system_exit_code("git checkout " + current_rev)
-                system_exit_code("git stash apply")
-                system_exit_code("git stash drop " + stash)
+            print "Merging geocommit notes"
+            system_exit_code("git update-ref refs/notes/geocommit-remote FETCH_HEAD")
+            system_exit_code("git notes --ref geocommit merge --strategy=theirs geocommit-remote")
         else:
             print "Already up-to-date."
 
@@ -162,7 +140,10 @@ class GeoGit(object):
         return None
 
     def cmd_note(self, argv):
+        print "Retrieving location ...",
+        sys.stdout.flush()
         note = self.get_note()
+        print "found."
 
         git_rev = self.git_rev
 
@@ -216,7 +197,7 @@ class GeoGit(object):
 
         self.fetch_and_merge_notes(argv[0])
 
-    def cmd_sync(self, argv):
+    def cmd_sync(self, argv, push=True):
         if len(argv) == 0:
             remote = self.get_remote()
             if remote:
@@ -229,8 +210,9 @@ class GeoGit(object):
 
         self.fetch_and_merge_notes(argv[0])
 
-        print "Syncing geocommit notes"
-        forward_system("git push " + argv[0] + " refs/notes/geocommit")
+        if push:
+            print "Syncing geocommit notes"
+            forward_system("git push " + argv[0] + " refs/notes/geocommit")
 
     def cmd_push(self, argv):
         opt_definition = {
@@ -247,6 +229,7 @@ class GeoGit(object):
             "-f": "bool",
             "--force": "bool",
             "--thin": "bool",
+            "--no-thin": "bool",
             "--receive-pack": "string",
             "--exec": "string",
             "-u": "bool",
@@ -260,11 +243,17 @@ class GeoGit(object):
             remote = self.get_remote()
             if remote:
                 arguments = [remote]
+                argv += [remote]
             else:
                 print >> sys.stderr, "Cannot push geo data: No remote specified"
                 usage("push")
+        if len(arguments) == 1:
+            arguments += [":"]
+            argv += [":"]
 
-        self.cmd_sync([arguments[0]])
+        argv += ["refs/notes/geocommit"]
+
+        self.cmd_sync([arguments[0]], False)
 
         forward_system(["git", "push"] + argv)
 
