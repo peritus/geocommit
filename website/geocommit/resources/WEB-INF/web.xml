@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+  <display-name>geocommit</display-name>
+
+  <servlet>
+    <servlet-name>geocommit</servlet-name>
+    <servlet-class>geocommit.app_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>geocommit</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  
+  <filter>
+       <filter-name>appstats</filter-name>
+       <filter-class>com.google.appengine.tools.appstats.AppstatsFilter</filter-class>
+       <init-param>
+           <param-name>logMessage</param-name>
+           <param-value>Appstats available: /appstats/details?time={ID}</param-value>
+        </init-param>
+   </filter>
+   <filter-mapping>
+       <filter-name>appstats</filter-name>
+       <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   
+   <servlet>
+       <servlet-name>appstats</servlet-name>
+       <servlet-class>com.google.appengine.tools.appstats.AppstatsServlet</servlet-class>
+   </servlet>
+   <servlet-mapping>
+       <servlet-name>appstats</servlet-name>
+       <url-pattern>/appstats/*</url-pattern>
+   </servlet-mapping>
+
+   <security-constraint>
+       <web-resource-collection>
+           <url-pattern>/appstats/*</url-pattern>
+       </web-resource-collection>
+       <auth-constraint>
+           <role-name>admin</role-name>
+       </auth-constraint>
+   </security-constraint>
+</web-app>
