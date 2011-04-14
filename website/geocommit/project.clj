@@ -11,8 +11,3 @@
                      [appengine-magic "0.4.1"]]
   :aot [geocommit.app_servlet geocommit.services]
   :repositories {"java.net" "http://download.java.net/maven/2"})
-;  :autodoc {:name "geocommit",
-;      :page-title "geocommit.com HTTP API",
-;      :copyright "Copyright 2010 The Geocommit Project, David Soria Parra"
-;      :description "The geocommit.com HTTP API is a simple rest API
-;to store/retrieve geocommits in/from the geocommit.com database"})
