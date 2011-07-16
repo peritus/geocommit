@@ -38,6 +38,7 @@ if exists(EXECUTABLE):
             for json_key, loc_key in optional_keys.iteritems():
                 if data.has_key(json_key):
                     setattr(location, loc_key, data[json_key])
+            location.src = 'cl'
             return location
         
         def get_location(self):
