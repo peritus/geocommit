@@ -7,6 +7,7 @@ from os.path import curdir, abspath, join
 from distutils.util import get_platform
 from setuptools import setup
 from setuptools.extension import Extension
+from setuptools.command.easy_install import easy_install as _easy_install
 from distutils.command.build_ext import build_ext as _build_ext
 from distutils.command.install_data import install_data as _install_data
 from distutils.version import StrictVersion
@@ -21,6 +22,9 @@ def runcmd(command, env=None):
     return out, err
 
 if get_platform().startswith('macosx'):
+    from os import chmod
+    import stat
+    
     # Remove PPC compilation if using Xcode 4.
     xc_path = "/usr/bin/xcodebuild"
     if os.path.exists(xc_path):
@@ -43,6 +47,17 @@ if get_platform().startswith('macosx'):
             # install_data class uses ('install_data', 'install_dir') instead.
             self.set_undefined_options('install', ('install_lib', 'install_dir'))
             _install_data.finalize_options(self)
+
+    class easy_install(_easy_install):
+        '''Need to properly set executable flags on geocommit binary.
+        When installed with sudo python setup.py install these flags aren't
+        set.
+        '''
+        def unpack_and_compile(self, egg_path, destination):
+            _easy_install.unpack_and_compile(self, egg_path, destination)
+            f = os.path.join(destination, "geocommit", "provider", "corelocation", "geocommit")
+            mode = ((os.stat(f)[stat.ST_MODE]) | 0555) & 07755
+            chmod(f, mode)
 
     class build_ext(_build_ext):
         '''
@@ -67,6 +82,7 @@ if get_platform().startswith('macosx'):
     extra_args['cmdclass'] = {
         'install_data': install_data,
         'build_ext': build_ext,
+        'easy_install':easy_install
     }
 
     extra_args['ext_modules'] = [
