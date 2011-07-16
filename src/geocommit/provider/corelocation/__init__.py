@@ -27,7 +27,7 @@ if exists(EXECUTABLE):
             if not data or not isinstance(data, dict) or not data.get('latitude') or not data.get('longitude'):
                 return None
             
-            location = Location(data['latitude'], data['longitude'])
+            location = Location(data['latitude'], data['longitude'], src='cl')
             optional_keys = {
                 'altitude': 'alt',
                 'verticalAccuracy': 'vacc',
@@ -38,7 +38,6 @@ if exists(EXECUTABLE):
             for json_key, loc_key in optional_keys.iteritems():
                 if data.has_key(json_key):
                     setattr(location, loc_key, data[json_key])
-            location.src = 'cl'
             return location
         
         def get_location(self):
