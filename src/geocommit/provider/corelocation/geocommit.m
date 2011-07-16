@@ -60,8 +60,7 @@ int main( int argc, const char* argv[])
     
     if ([json length]) {
         printf("%s\n", [json UTF8String]);
-    } else {
-        result = EXIT_FAILURE;
+        result = EXIT_SUCCESS;
     }
     
     [pool release], pool = nil;

@@ -47,7 +47,7 @@ if exists(EXECUTABLE):
             
             try:
                 parsed_value = json.loads(value)
-                
+                return self.location_from_dict(parsed_value)
             except ValueError as e:
                 return None
             return None
