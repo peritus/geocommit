@@ -1,16 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+import subprocess
 from os.path import curdir, abspath, join
 from distutils.util import get_platform
 from setuptools import setup
 from setuptools.extension import Extension
 from distutils.command.build_ext import build_ext as _build_ext
 from distutils.command.install_data import install_data as _install_data
+from distutils.version import StrictVersion
 
 extra_args = {'cmdclass': {'install_data': _install_data}}
 
+def runcmd(command, env=None):
+    if env is None:
+        env = {}
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+    out, err = p.communicate()
+    return out, err
+
 if get_platform().startswith('macosx'):
+    # Remove PPC compilation if using Xcode 4.
+    xc_path = "/usr/bin/xcodebuild"
+    if os.path.exists(xc_path):
+        version = runcmd([xc_path, '-version'])[0].splitlines()[0]
+        if version.startswith('Xcode'):
+            version_number = version.split()[1]
+            if StrictVersion(version_number) >= StrictVersion('4.0'):
+                os.environ['ARCHFLAGS'] = '-arch i386 -arch x86_64'
+    
     class install_data(_install_data):
         '''
         On MacOS, the platform-specific lib dir is /System/Library/Framework/Python/.../
@@ -53,7 +72,7 @@ if get_platform().startswith('macosx'):
     extra_args['ext_modules'] = [
         Extension(
           name = 'geocommit.provider.corelocation.geocommit',
-          sources=['src/geocommit/provider/corelocation/geocommit.m', 'src/geocommit/provider/corelocation/geocommitdelegate.m'],
+          sources=['src/geocommit/provider/corelocation/geocommit.m', 'src/geocommit/provider/corelocation/GGCLDelegate.m'],
           extra_link_args=['-framework', 'Foundation', '-framework', 'CoreLocation']
         ),
     ]
