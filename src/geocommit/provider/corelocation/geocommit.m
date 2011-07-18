@@ -1,4 +1,4 @@
-#import <Foundation/foundation.h>
+#import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
 #import "GGCLDelegate.h"
