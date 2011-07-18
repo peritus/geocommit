@@ -81,3 +81,14 @@ Version 1.0 of the format defines the keys:
  * dir (optional) direction of travel
  * hacc (optional) horizontal accuracy of long/lat values in metres
  * vacc (optional) vertical accuracy of altitude value in metres
+
+Authors
+=======
+
+Geocommit is a crazy idea that was initially hacked together on an even crazier
+weekend in December 2010 in Berlin.
+
+ * Nils Adermann (cli client, linux support, website, web service, github hook)
+ * Filip Noetzel (original idea, cli client, python packaging, initial Mac OS X support, chrome extension)
+ * David Soria Parra (website, mercurial support, web service, bitbucket hook)
+ * Andrew Wooster (significant Mac OS X improvements)
