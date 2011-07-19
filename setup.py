@@ -24,7 +24,7 @@ def runcmd(command, env=None):
 if get_platform().startswith('macosx'):
     from os import chmod
     import stat
-    
+
     # Remove PPC compilation if using Xcode 4.
     xc_path = "/usr/bin/xcodebuild"
     if os.path.exists(xc_path):
@@ -33,7 +33,7 @@ if get_platform().startswith('macosx'):
             version_number = version.split()[1]
             if StrictVersion(version_number) >= StrictVersion('4.0'):
                 os.environ['ARCHFLAGS'] = '-arch i386 -arch x86_64'
-    
+
     class install_data(_install_data):
         '''
         On MacOS, the platform-specific lib dir is /System/Library/Framework/Python/.../

@@ -103,4 +103,3 @@ class Location(object):
                 setattr(l, key, data[key])
 
         return l
-

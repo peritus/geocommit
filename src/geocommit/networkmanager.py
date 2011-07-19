@@ -108,4 +108,3 @@ try:
 
 except ImportError:
     pass # no dbus available on this system
-

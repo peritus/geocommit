@@ -21,4 +21,3 @@ class LocationProvider(object):
         else:
             from geocommit.networkmanager import NetworkManager
             return NetworkManager()
-

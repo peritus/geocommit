@@ -302,4 +302,3 @@ def git_geo():
 
     usage()
     sys.exit(1)
-

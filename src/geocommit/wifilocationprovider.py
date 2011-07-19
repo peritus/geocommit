@@ -116,4 +116,3 @@ class WifiLocationProvider(LocationProvider):
             self.access_token = location["access_token"]
 
         return self.location_from_dict(location)
-

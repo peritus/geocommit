@@ -9,93 +9,93 @@
 // ==/UserScript==
 
 function getGeocommitLink() {
-    return '<a href="http://www.geocommit.com" title="geocommit">geocommit</a>';
+  return '<a href="http://www.geocommit.com" title="geocommit">geocommit</a>';
 }
 
 function getMapHtml(point, width, height, style) {
 
-    if (style) {
-        style = 'style="' + style + '" ';
-    }
-    else {
-        style = '';
-    }
+  if (style) {
+    style = 'style="' + style + '" ';
+  }
+  else {
+    style = '';
+  }
 
-    return '<a href="http://maps.google.com/maps?q=' + point +
-        '" title="geocommit location"><img ' + style +
-        'src="http://maps.google.com/maps/api/staticmap?center=' + point +
-        '&zoom=14&size=' + width + 'x' + height +
-        '&format=png&sensor=false&markers=' + point +
-        '"/></a>';
+  return '<a href="http://maps.google.com/maps?q=' + point +
+      '" title="geocommit location"><img ' + style +
+      'src="http://maps.google.com/maps/api/staticmap?center=' + point +
+      '&zoom=14&size=' + width + 'x' + height +
+      '&format=png&sensor=false&markers=' + point +
+      '"/></a>';
 }
 
 function geocommitVisualize() {
-    var data = {};
+  var data = {};
 
-    // github
-    if ($('#gitnotes-content').length) {
+  // github
+  if ($('#gitnotes-content').length) {
 
-        $('#gitnotes-content').find('h3').each(function(i, el) {
-            if ('geocommit' !== $(el).text() && 'geogit' !== $(el).text()) {
-                return;
-            }
+    $('#gitnotes-content').find('h3').each(function(i, el) {
+      if ('geocommit' !== $(el).text() && 'geogit' !== $(el).text()) {
+        return;
+      }
 
-            var geostr = $(el).next().text().substr('geocommit (1.0)\n'.length);;
-            var kwblob = geostr.split('\n');
+      var geostr = $(el).next().text().substr('geocommit (1.0)\n'.length);
+      var kwblob = geostr.split('\n');
 
-            $(kwblob).each(function(i, line) {
-                if (! line) {
-                    return;
-                }
-                var d = line.split(": ");
+      $(kwblob).each(function(i, line) {
+        if (! line) {
+          return;
+        }
+        var d = line.split(': ');
 
-                data[d[0]] = d[1];
-            });
+        data[d[0]] = d[1];
+      });
 
-            $(el).next().text(geostr)
-            $(el).next().prepend(getGeocommitLink() + ' location: \n');
+      $(el).next().text(geostr);
+      $(el).next().prepend(getGeocommitLink() + ' location: \n');
 
-        });
+    });
 
-        var point = (data.Latitute || data.lat) + ',' + (data.Longitude || data.long);
+    var point = (data.Latitute || data.lat) + ',' + (data.Longitude || data.long);
 
-        $('#commit div.group div.envelope div.machine').append(
-            '<div style="padding-top:15px;background-color: #eaf2f5;' +
+    $('#commit div.group div.envelope div.machine').append(
+        '<div style="padding-top:15px;background-color: #eaf2f5;' +
             'margin-left:-125px;">' + getMapHtml(point, 320, 200, null) +
             '</div>'
-        );
-    }
-    // bitbucket
-    else if ($('#source-summary').length) {
+    );
+  }
+// bitbucket
+  else if ($('#source-summary').length) {
 
-        $('#source-summary').find('p').each(function(i, el) {
-            if (!$(el).text().match('^geocommit')) {
-                return;
-            }
+    $('#source-summary').find('p').each(function(i, el) {
+      if (!$(el).text().match('^geocommit')) {
+        return;
+      }
 
-            var geostr = $(el).text().substr('geocommit(1.0): '.length);
-            var kwblob = geostr.split(', ');
+      var geostr = $(el).text().substr('geocommit(1.0): '.length);
+      var kwblob = geostr.split(', ');
 
-            $(kwblob).each(function(i, keyval) {
-                if (! keyval) {
-                    return;
-                }
-                var d = keyval.split(" ");
+      $(kwblob).each(function(i, keyval) {
+        if (! keyval) {
+          return;
+        }
+        var d = keyval.split(' ');
 
-                data[d[0]] = d[1];
-            });
+        data[d[0]] = d[1];
+      });
 
-            $(el).text(geostr);
-            $(el).prepend(getGeocommitLink() + ' location: ');
+      $(el).text(geostr);
+      $(el).prepend(getGeocommitLink() + ' location: ');
 
-        });
+    });
 
-        var point = data.lat + ',' + data.long;
+    var point = data.lat + ',' + data.long;
 
-        $('#source-summary dl.relations').append(
-            '<dt>location</dt><dd>' + getMapHtml(point, 256, 192, null) + '</dd>'
-        );
-    }
+    $('#source-summary dl.relations').append(
+        '<dt>location</dt><dd>' + getMapHtml(point, 256, 192, null) + '</dd>'
+    );
+  }
 }
 
 geocommitVisualize();
