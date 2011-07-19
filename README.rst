@@ -1,7 +1,7 @@
 Geocommit allows you to attach geolocation information to your commits for
 later analysis.
 
-Everything happens on your machine to protect your privacy, you you need to push the geo annotations explicitly if you want to share them with others.
+Everything happens on your machine to protect your privacy, you need to push the geo annotations explicitly if you want to share them with others.
 
 Installation
 ============
