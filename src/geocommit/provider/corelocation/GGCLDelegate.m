@@ -38,7 +38,10 @@
 }
 
 - (BOOL)goodEnough {
-    if (![locationManager locationServicesEnabled]) return YES;
+    // "locationServiceEnabled" was deprecated in Mac OS 10.6
+    if (![CLLocationManager locationServicesEnabled]) {
+        return YES;
+    }
     if (!dirtied) return NO;
     if (didFail) return YES;
     if (updateCount >= 2 && timerCount >= 20) return YES;
