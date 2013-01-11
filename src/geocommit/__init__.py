@@ -56,8 +56,10 @@ class GeoGit(object):
         forward_system(["git", name] + argv, read_stdin)
 
     def install_hooks(self, directory):
-        git_dir = system("git rev-parse --show-toplevel", directory).strip('\n\r ') + "/"
-        git_dir += system("git rev-parse --git-dir", directory).strip('\n\r ')
+        git_dir = os.path.join(
+                system("git rev-parse --show-toplevel", directory).strip('\n\r '),
+                system("git rev-parse --git-dir", directory).strip('\n\r ')
+        )
 
         hooks = {
             "post-commit": ["#!/bin/sh\n", "git geo note\n"],
